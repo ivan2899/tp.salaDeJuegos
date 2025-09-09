@@ -2,13 +2,13 @@
 .game-card {
   background-color: transparent;
   backdrop-filter: blur(20px);
-  border-radius: 15px;
+  border-radius: 50px;
   overflow: hidden;
-  border: none; /* quitar borde gris de Bootstrap */
+  border: none;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.6);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  color: #ddd; /* texto más claro */
+  color: #ddd;
   height: 100%;
 }
 
@@ -20,9 +20,10 @@
 
 /* Imagen */
 .game-card .card-img-top {
-  height: 180px;
+  height: 300px;
   object-fit: cover;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
 }
 
 /* Título */
@@ -37,4 +38,20 @@
 .game-card .card-text {
   font-size: 0.95rem;
   color: #ddd;
+}
+
+.btnChat{
+  background: none;
+  border: none;
+}
+
+.divChat{
+  display: flex;
+  position: absolute;
+  top: 70px;
+  right: 0;
+}
+
+.imgChat{
+  width: 100px;
 }

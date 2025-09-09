@@ -1,38 +1,63 @@
-import { Component, EventEmitter, Output, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterLink, RouterModule } from '@angular/router';
+import { Component } from '@angular/core';
+import { environment } from 'src/environments/environment';
 import { createClient } from '@supabase/supabase-js';
-import { environment } from '../../../environments/environment';
-import Swal from 'sweetalert2';
-import { state } from '@angular/animations';
+import { Router } from '@angular/router';
+import { ToastController, AlertController } from '@ionic/angular';
 
 const supabase = createClient(environment.apiUrl, environment.publicAnonKey);
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [FormsModule, RouterLink],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  selector: 'app-home',
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss'],
 })
-export class LoginComponent {
-  username: string = "";
-  password: string = "";
+export class HomePage {
 
-  constructor(private router: Router) {
+  username!: string;
+  password!: string;
 
+  constructor(
+    public router: Router,
+    private toastController: ToastController,
+    private alertController: AlertController
+  ) { }
+
+  onRadioChange(event: any) {
+    const value = event.detail.value;
+    console.log(value);
+
+    switch (value) {
+      case 'admin':
+        this.username = 'admin@admin.com';
+        this.password = '111111';
+        break;
+      case 'user':
+        this.username = 'usuario@usuario.com';
+        this.password = '333333';
+        break;
+      case 'guest':
+        this.username = 'invitado@invitado.com';
+        this.password = '222222';
+        break;
+    }
   }
 
-  logUser() {
-    supabase.from('logs')
-      .insert([
-        { name: this.username }
-      ])
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Error al registrar en log:', error.message);
-          alert(error.message);
-        }
-      });
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color: 'medium',
+      position: 'bottom'
+    });
+    await toast.present();
+  }
+
+  async showAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: ['OK'],
+    });
+    await alert.present();
   }
 
   async login() {
@@ -57,25 +82,19 @@ export class LoginComponent {
       if (error) {
         mensaje = this.traducirError(error.message);
       } else {
-        this.logUser();
+        this.showToast('Inicio de sesión exitoso ✅');
         huboError = false;
-        this.router.navigateByUrl('home', {
+        this.router.navigateByUrl('alarma', {
           state: {
             username: this.username,
+            password: this.password
           }
         });
       }
     }
 
-    if (huboError) {
+    if(huboError){this.showAlert('Error', mensaje);}
 
-      Swal.fire({
-        title: 'Error',
-        text: mensaje,
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-    }
   }
 
   private traducirError(codigo: string): string {
@@ -91,15 +110,5 @@ export class LoginComponent {
       default:
         return 'Ocurrió un error inesperado. Intente nuevamente.';
     }
-  }
-
-  UsuarioUno() {
-    this.username = "navebo4226@aperiol.com";
-    this.password = "@a--_:5858NaveBor";
-  }
-
-  UsuarioDos() {
-    this.username = "palokoy768@aperiol.com";
-    this.password = "+_+Pm@uF.rqi9$b";
   }
 }

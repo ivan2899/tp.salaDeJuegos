@@ -2,18 +2,22 @@
     <form action="">
         <h1>Registrarse</h1>
         <div class="input-box user">
-            <input type="text" name="nombre" placeholder="Nombre">
+            <input type="email" [(ngModel)]="username" name="email" placeholder="Email">
+            <i class='bx bxs-envelope'></i>
+        </div>
+        <div class="input-box user">
+            <input type="text" [(ngModel)]="name" name="nombre" placeholder="Nombre">
             <i class='bx bxs-user'></i>
         </div>
         <div class="input-box">
-            <input type="password" name="clave" placeholder="Clave">
+            <input type="password" [(ngModel)]="password" name="clave" placeholder="Clave">
             <i class='bx bxs-lock-alt'></i>
         </div>
         <div class="input-box">
-            <input type="password" name="clave" placeholder="Confirmar clave">
+            <input type="password" [(ngModel)]="passwordConfirm" name="clave" placeholder="Confirmar clave">
             <i class='bx bxs-lock-alt'></i>
         </div>
 
-        <button type="button" class="btn">Registrar</button>
+        <button (click)="register()" type="button" class="btn">Registrar</button>
     </form>
 </div>

@@ -1,39 +1,54 @@
 <div class="container my-5">
+  <div class="divChat">
+    <button class="btnChat" (click)="verificar('chat')"><img class="imgChat"
+        src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/extra/chatIcon.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZXh0cmEvY2hhdEljb24ucG5nIiwiaWF0IjoxNzU3NDIxOTY3LCJleHAiOjMzMzQyMjE5Njd9.iX-mAN83U-4JA724uY6X_XmfXCCX-Q492u5p1MImJ_c"
+        alt=""></button>
+  </div>
+
   <div class="row g-4 justify-content-center">
 
     <div class="col-md-3">
-      <div class="card game-card" [routerLink]="'./ahorcado'">
-        <img class="card-img-top" src="../../../assets/media/logoAhorcado.png" alt="Ahorcado">
+      <div class="card game-card" (click)="verificar('ahorcado')">
+        <img class="card-img-top"
+          src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/logos/logoAhorcado.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbG9nb3MvbG9nb0Fob3JjYWRvLnBuZyIsImlhdCI6MTc1NjE4MTU0NywiZXhwIjoxNzg3NzE3NTQ3fQ.0XX2Gj_SoK3T1gbh1jBcAUAkFdiimVxAa4rXHyw_NJo"
+          alt="Ahorcado">
         <div class="card-body text-center">
           <h5 class="card-title">Ahorcado</h5>
-          <p class="card-text">Se basa en adivinar una palabra. Sabes cuántas letras tiene y puedes equivocarte 5 veces.</p>
+          <p class="card-text">Se basa en adivinar una palabra, saber qué y cuántas letras tiene.
+          </p>
         </div>
       </div>
     </div>
 
     <div class="col-md-3">
-      <div class="card game-card" [routerLink]="'./mayor-menor'">
-        <img class="card-img-top" src="../../../assets/media/logoMayorMenor.png" alt="Mayor o menor">
+      <div class="card game-card" (click)="verificar('mayormenor')">
+        <img class="card-img-top"
+          src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/logos/logoMayorMenor.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbG9nb3MvbG9nb01heW9yTWVub3IucG5nIiwiaWF0IjoxNzU2MTgwNjc2LCJleHAiOjE3ODc3MTY2NzZ9.mdNwvGFdxl0hAeohWZb8W0Y-0gXLU02O6ibhl1KJUh8"
+          alt="Mayor o menor">
         <div class="card-body text-center">
           <h5 class="card-title">Mayor o menor</h5>
-          <p class="card-text">Adivina si la siguiente carta será mayor o menor. Estrategia y suerte.</p>
+          <p class="card-text">Adivina si la siguiente carta será mayor o menor.</p>
         </div>
       </div>
     </div>
 
     <div class="col-md-3">
-      <div class="card game-card" [routerLink]="'./preguntados'">
-        <img class="card-img-top" src="../../../assets/media/logoPreguntados.png" alt="Preguntados">
+      <div class="card game-card" (click)="verificar('preguntados')">
+        <img class="card-img-top"
+          src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/logos/logoPreguntados.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbG9nb3MvbG9nb1ByZWd1bnRhZG9zLnBuZyIsImlhdCI6MTc1NjE4MDcyNCwiZXhwIjoxNzg3NzE2NzI0fQ.WSAYDwt1-Rc9EmBFqTls7yDrZzhWzEzPW5VhHH8O84k"
+          alt="Preguntados">
         <div class="card-body text-center">
           <h5 class="card-title">Preguntados</h5>
-          <p class="card-text">Responde preguntas de opción múltiple y gana puntos con cada acierto.</p>
+          <p class="card-text">Responde preguntas de múltiple opción y ganá puntos con cada acierto.</p>
         </div>
       </div>
     </div>
 
     <div class="col-md-3">
-      <div class="card game-card" [routerLink]="'./blackjack'">
-        <img class="card-img-top" src="../../../assets/media/logoBlackjack.png" alt="Blackjack">
+      <div class="card game-card" (click)="verificar('blackjack')">
+        <img class="card-img-top"
+          src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/logos/logoBlackjack.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvbG9nb3MvbG9nb0JsYWNramFjay5wbmciLCJpYXQiOjE3NTYxODA3MTEsImV4cCI6MTc4NzcxNjcxMX0.cdOIZZ-OVdtsj5Du3_MNruoEsNV_KxvQgqw4EFgmt2Y"
+          alt="Blackjack">
         <div class="card-body text-center">
           <h5 class="card-title">Blackjack</h5>
           <p class="card-text">Llega a 21 sin pasarte y derrota a la banca.</p>
@@ -43,3 +58,5 @@
 
   </div>
 </div>
+
+<router-outlet />

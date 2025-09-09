@@ -16,12 +16,11 @@
     margin-bottom: 1.5rem;
 }
 
-.about-avatar {
+.about-avatar img{
     width: 180px;
     height: 180px;
     border-radius: 100px;
     object-fit: cover;
-    background: url(../../../assets/media/fm.jpg) no-repeat center center;
     background-size: contain;
 }
 

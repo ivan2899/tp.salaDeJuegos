@@ -2,7 +2,7 @@
         <form action="">
             <h1>Iniciar sesión</h1>
             <div class="input-box user">
-                <input type="text" name="nombre" placeholder="Nombre" [(ngModel)]="name">
+                <input type="text" name="nombre" placeholder="Nombre" [(ngModel)]="username">
                 <i class='bx bxs-user'></i>
             </div>
             <div class="input-box">
@@ -10,7 +10,7 @@
             <i class='bx bxs-lock-alt'></i>
                 </div>
 
-            <button type="button" class="btn">Ingresar</button>
+            <button (click)="login()" type="button" class="btn">Ingresar</button>
             
             <div class="register-link">
                 <p>No tienes cuenta? <button routerLink="../register" class="btn-nav">Registrarse</button>
