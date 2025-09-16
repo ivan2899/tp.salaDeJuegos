@@ -1,0 +1,45 @@
+.fondo {
+    img {
+        width: 800px;
+        border-radius: 30px;
+    }
+}
+
+.crupier {
+    position: absolute;
+    background-color: aqua;
+    width: 30px;
+    height: 30px;
+
+}
+
+.usuario {
+    position: absolute;
+    background-color: aqua;
+    width: 30px;
+    height: 30px;
+    bottom: 25vh;
+    right: 49vw;
+}
+
+.back {
+  position: absolute;
+  top: 75px;
+  left: 10px;
+}
+
+.imgBack {
+  width: 70px;
+  cursor: pointer;
+}
+
+.help {
+  position: absolute;
+  top: 55px;
+  right: 0;
+}
+
+.imgHelp {
+  cursor: pointer;
+  width: 110px;
+}

@@ -1,0 +1,135 @@
+/* Ventana del chat */
+.chat-window {
+    position: fixed;
+    top: 80px;
+    right: 100px;
+    width: 320px;
+    height: 420px;
+    background: #fff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    animation: slideUp 0.6s ease;
+}
+
+.chat-header {
+    background: #e8dabf;
+    color: black;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* espacio entre icono y título */
+
+    img {
+        width: 32px;
+        height: 32px;
+    }
+
+    h5 {
+        margin: 0;
+        font-size: 16px;
+    }
+}
+
+.chat-body {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background: #f9f9f9;
+
+    .message {
+        max-width: 80%;
+        margin: 10px 0;
+        padding: 8px 12px;
+        border-radius: 15px;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+
+        &.received {
+            background: #e0e0e0;
+            align-self: flex-start;
+        }
+
+        &.sent {
+            background: #4caf50;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .msg-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            opacity: 0.8;
+            margin-bottom: 3px;
+
+            .msg-email {
+                font-weight: bold;
+            }
+        }
+
+        .msg-text {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .msg-time {
+            font-size: 11px;
+            opacity: 0.7;
+            text-align: right;
+            margin-top: 3px;
+        }
+    }
+}
+
+.chat-footer {
+    display: flex;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+    background: #fff;
+
+    input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 8px;
+        border-radius: 20px;
+        background: #f1f1f1;
+        font-size: 14px;
+    }
+
+    .send-btn {
+        background: #e8dabf;
+        border: none;
+        color: white;
+        font-size: 18px;
+        width: 90px;
+        height: 40px;
+        border-radius: 30%;
+        margin-left: 8px;
+        cursor: pointer;
+
+        &:hover {
+            background: #e8da66;
+        }
+    }
+}
+
+/* Animación de aparición */
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

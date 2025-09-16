@@ -1,13 +1,17 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+
 import Swal from 'sweetalert2';
+import { JuegosModule } from '../../modulos/juegos/juegos.module';
+import { ChatComponent } from '../chat/chat.component';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, RouterOutlet],
+  imports: [RouterLink, RouterOutlet, JuegosModule, ChatComponent, CommonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -45,18 +49,19 @@ export class HomeComponent {
       switch (ruta) {
         case "chat":
            this.mostrarChat = !this.mostrarChat;
+           console.log(this.mostrarChat);
           break;
         case "ahorcado":
           this.router.navigateByUrl('juegos/ahorcado');
           break;
         case "mayormenor":
-          this.router.navigateByUrl('mayormenor');
+          this.router.navigateByUrl('juegos/mayormenor');
           break;
         case "preguntados":
-          this.router.navigateByUrl('preguntados');
+          this.router.navigateByUrl('juegos/preguntados');
           break;
         case "blackjack":
-          this.router.navigateByUrl('blackjack');
+          this.router.navigateByUrl('juegos/blackjack');
           break;
       }
     }

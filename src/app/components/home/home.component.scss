@@ -30,7 +30,7 @@
 .game-card .card-title {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #f6d26c; 
+  color: #f6d26c;
   margin-bottom: 10px;
 }
 
@@ -40,18 +40,41 @@
   color: #ddd;
 }
 
-.btnChat{
+.btnChat {
   background: none;
   border: none;
 }
 
-.divChat{
+.divChat {
   display: flex;
   position: absolute;
   top: 70px;
   right: 0;
 }
 
-.imgChat{
+.imgChat {
   width: 100px;
+}
+
+.encuesta {
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  background: #f6d26c;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.encuesta:hover {
+  background: #ffd8cf;
+  transform: translateY(-2px);
+}
+
+.divEncuesta {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px; /* espacio entre las cards y el botón */
 }

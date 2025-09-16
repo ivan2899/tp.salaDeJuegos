@@ -4,7 +4,6 @@ import { Router, RouterLink, RouterModule } from '@angular/router';
 import { createClient } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
-import { state } from '@angular/animations';
 
 const supabase = createClient(environment.apiUrl, environment.publicAnonKey);
 @Component({

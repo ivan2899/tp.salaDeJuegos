@@ -1,3 +1,39 @@
-<div class="back" [routerLink]="'../'">
-    <img src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/extra/back.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZXh0cmEvYmFjay5wbmciLCJpYXQiOjE3NTYxODQwMDgsImV4cCI6MTc4NzcyMDAwOH0.LkoHg6w1pjbBz-V7QqsCVk4ILsHsA7o914uMi6VG1x4" alt="">
+<div class="back" [routerLink]="'../../home'">
+  <img
+    src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/extra/back.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZXh0cmEvYmFjay5wbmciLCJpYXQiOjE3NTc0Njg3ODcsImV4cCI6MTc4OTAwNDc4N30.rdSYprJunkFLVbtM48iSsscUVATUC22rLdWtd5VPLDE"
+    alt="" class="imgBack">
+</div>
+
+<div class="help" (click)="ayuda()">
+  <img
+    src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/extra/helpIcon.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZXh0cmEvaGVscEljb24ucG5nIiwiaWF0IjoxNzU3OTk4NTk5LCJleHAiOjE3ODk1MzQ1OTl9.zZ5VaLxmkzpN_8oRnS1772vBcPLuePc4bhUFvBRX3sA"
+    alt="" class="imgHelp">
+</div>
+
+
+<div class="ahorcado-container">
+
+  <!-- Imagen -->
+  <div class="imagen">
+    <img [src]="imagenAhorcado" alt="Ahorcado">
+  </div>
+
+  <!-- Palabra -->
+  <div class="palabra">
+    {{ palabraMostrada }}
+  </div>
+
+  <!-- Teclado -->
+  <div class="teclado">
+    <div *ngFor="let fila of teclado" class="fila">
+      <button *ngFor="let letra of fila" (click)="presionarLetra(letra)"
+        [disabled]="letrasAdivinadas.includes(letra) || gano || perdio" [ngClass]="{
+          'usada': letrasAdivinadas.includes(letra),
+          'correcta': letrasAdivinadas.includes(letra) && palabraOculta.includes(letra),
+          'incorrecta': letrasAdivinadas.includes(letra) && !palabraOculta.includes(letra)
+        }">
+        {{ letra }}
+      </button>
+    </div>
+  </div>
 </div>

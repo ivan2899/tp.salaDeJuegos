@@ -1,0 +1,47 @@
+.content{
+    display: flex;
+}
+
+.card{
+    background-color: aqua;
+    width: 300px;
+}
+
+.reverseCard{
+
+}
+
+.btns{
+
+    button{
+        background: none;
+        border: none;
+        
+    }
+
+    img{
+        width: 180px;
+    }
+}
+
+.back {
+  position: absolute;
+  top: 75px;
+  left: 10px;
+}
+
+.imgBack {
+  width: 70px;
+  cursor: pointer;
+}
+
+.help {
+  position: absolute;
+  top: 55px;
+  right: 0;
+}
+
+.imgHelp {
+  cursor: pointer;
+  width: 110px;
+}

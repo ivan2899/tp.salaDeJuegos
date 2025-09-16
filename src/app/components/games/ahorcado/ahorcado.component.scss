@@ -1,6 +1,90 @@
-img{
-    height: 100px;
-    position: absolute;
-    top: 75px;
-    left: 10px;
+.back {
+  position: absolute;
+  top: 75px;
+  left: 10px;
+}
+
+.imgBack {
+  width: 70px;
+  cursor: pointer;
+}
+
+.help {
+  position: absolute;
+  top: 55px;
+  right: 0;
+}
+
+.imgHelp {
+  cursor: pointer;
+  width: 110px;
+}
+
+.ahorcado-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.imagen img {
+  width: 350px;
+  height: auto;
+}
+
+.palabra {
+  font-size: 2rem;
+  letter-spacing: 10px;
+  font-weight: bold;
+  color: #f5e28d;
+  border: 1px solid #000;
+  backdrop-filter: blur(20px);
+
+}
+
+.teclado {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: transparent;
+  backdrop-filter: blur(30px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  padding: 20px;
+}
+
+.fila {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+button {
+  width: 60px;
+  height: 60px;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #eee;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+button.usada {
+  background: #ccc;
+}
+
+button.correcta {
+  background: #4caf50;
+  color: white;
+}
+
+button.incorrecta {
+  background: #f44336;
+  color: white;
 }

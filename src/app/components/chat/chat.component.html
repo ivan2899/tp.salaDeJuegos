@@ -1,1 +1,31 @@
-<p>chat works!</p>
+<!-- Ventana del chat -->
+<div class="chat-window">
+
+    <div class="chat-header">
+        <img src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/extra/chatOpenIcon.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZXh0cmEvY2hhdE9wZW5JY29uLnBuZyIsImlhdCI6MTc1Nzk5Mzc0NCwiZXhwIjoxNzg5NTI5NzQ0fQ.a3o78-wAHucIOrvabZyMeAxfcAN1ke6I8N9oRy-IWbw"
+            alt="">
+        <h5>Chat</h5>
+    </div>
+
+    <div class="chat-body" #chatBody>
+  <div *ngFor="let msg of messages" class="message" [ngClass]="msg.type">
+    <!-- header: email (solo si NO es del usuario) y fecha (siempre a la derecha) -->
+    <div class="msg-meta">
+      <span class="msg-email" *ngIf="msg.email !== actualUser">{{ msg.email }}</span>
+      <span class="msg-date">{{ msg.created_at | date:'shortDate' }}</span>
+    </div>
+
+    <!-- texto -->
+    <div class="msg-text">{{ msg.text }}</div>
+
+    <!-- hora (siempre a la derecha abajo) -->
+    <div class="msg-time">{{ msg.created_at | date:'shortTime' }}</div>
+  </div>
+</div>
+
+
+    <div class="chat-footer">
+        <input type="text" placeholder="Escribe un mensaje..." [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" />
+        <button class="send-btn" (click)="sendMessage()">➤</button>
+    </div>
+</div>
