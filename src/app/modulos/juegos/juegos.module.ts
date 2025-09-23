@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 import { JuegosRoutingModule } from './juegos-routing.module';
 import { AhorcadoComponent } from '../../components/games/ahorcado/ahorcado.component';
@@ -8,6 +9,7 @@ import { PreguntadosComponent } from '../../components/games/preguntados/pregunt
 import { BlackjackComponent } from '../../components/games/blackjack/blackjack.component';
 import { RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -16,6 +18,8 @@ import Swal from 'sweetalert2';
     CommonModule,
     JuegosRoutingModule,
     RouterLink,
+    FormsModule,
+    HttpClientModule
   ]
 })
 export class JuegosModule { }

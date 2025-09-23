@@ -29,7 +29,7 @@ export class HomeComponent {
   }
 
   verificar(ruta: string) {
-    if ((this.username == undefined || this.username == '' || !this.username)) {
+   /* if ((this.username == undefined || this.username == '' || !this.username)) {
       Swal.fire({
         title: "No iniciaste sesión",
         text: "No puedes ingresar porque no iniciaste sesión, puedes redirigirte a la pag de inicio para ingresar",
@@ -45,7 +45,7 @@ export class HomeComponent {
         }
       });
     }
-    else {
+    else {*/
       switch (ruta) {
         case "chat":
            this.mostrarChat = !this.mostrarChat;
@@ -63,7 +63,11 @@ export class HomeComponent {
         case "blackjack":
           this.router.navigateByUrl('juegos/blackjack');
           break;
-      }
+     // }
     }
+  }
+
+  verificarAdm(){
+    this.router.navigateByUrl('/encuesta');
   }
 }

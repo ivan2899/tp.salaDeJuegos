@@ -1,0 +1,94 @@
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* ocupa toda la pantalla */
+  background: none; /* sin fondo */
+}
+
+.card {
+  width: 1000px; /* más grande */
+  height: auto;
+  background: transparent;
+  backdrop-filter: blur(40px);
+  border-radius: 20px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  overflow: hidden;
+  text-align: center;
+  padding: 20px;
+}
+
+.flag {
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 columnas */
+  gap: 20px; /* espacio entre botones */
+  padding: 20px;
+}
+
+.options button {
+  padding: 18px;
+  font-size: 18px;
+  border-radius: 14px;
+  border: none;
+  background: #e0e0e0; /* gris neutro */
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.options button:hover {
+  background: #bdbdbd; /* gris más oscuro */
+  transform: scale(1.05);
+}
+
+.options button.correct {
+  background: #2e7d32 !important; /* verde cuando aciertas */
+  color: white;
+}
+
+.options button.incorrect {
+  background: #c62828 !important; /* rojo cuando fallas */
+  color: white;
+}
+
+.puntaje {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.6);
+  color: #f6d26c;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.back {
+  position: absolute;
+  top: 75px;
+  left: 10px;
+}
+
+.imgBack {
+  width: 70px;
+  cursor: pointer;
+}
+
+.help {
+  position: absolute;
+  top: 55px;
+  right: 0;
+}
+
+.imgHelp {
+  cursor: pointer;
+  width: 110px;
+}

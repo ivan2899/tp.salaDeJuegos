@@ -29,7 +29,7 @@
 }
 
 .imagen img {
-  width: 350px;
+  width: 280px;
   height: auto;
 }
 
@@ -60,8 +60,8 @@
 }
 
 button {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   font-size: 1.2rem;
   border-radius: 8px;
   border: 1px solid #333;
@@ -87,4 +87,17 @@ button.correcta {
 button.incorrecta {
   background: #f44336;
   color: white;
+}
+
+.puntaje {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.6);
+  color: #f6d26c;
+  padding: 10px 20px;
+  border-radius: 10px;
 }

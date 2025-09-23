@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
   styleUrl: './ahorcado.component.scss'
 })
 export class AhorcadoComponent {
+  puntos: number = 50;
   palabraOculta: string = '';
   letrasAdivinadas: string[] = [];
   intentos: number = 0;
@@ -63,6 +64,7 @@ export class AhorcadoComponent {
 
     if (!this.palabraOculta.includes(letra)) {
       this.intentos++;
+      if (this.puntos > 0 ) {this.puntos -= 10;}
     }
 
     if (this.gano) {

@@ -1,24 +1,3 @@
-<header class="main-header">
-
-  <div class="actions">
-    <button routerLink="home" routerLinkActive="btn-active" class="btn-nav">Home</button>
-    <button routerLink="about" routerLinkActive="btn-active" class="btn-nav">Acerca de Mi</button>
-  </div>
-
-  <p class="titulo">Sala de Juegos</p>
-
-  <div *ngIf="isLoggedIn; else guest" class="d-flex align-items-center gap-3">
-    <div class="text-end">
-      <div class="small text-primary">{{ email }}</div>
-    </div>
-    <button class="btn-nav" (click)="logout()">Log Out</button>
-  </div>
-
-  <ng-template #guest>
-    <div class="actions">
-      <button routerLink="login" routerLinkActive="btn-active" class="btn-nav">Iniciar sesión</button>
-      <button routerLink="register" routerLinkActive="btn-active" class="btn-nav">Registrarse</button>
-    </div>
-  </ng-template>
-</header>
-<router-outlet />
+<app-layout>
+  <router-outlet />
+</app-layout>

@@ -1,25 +1,127 @@
-.fondo {
-    img {
-        width: 800px;
-        border-radius: 30px;
-    }
+.mesa {
+  position: relative;
+  width: 900px;
+  height: 550px;
+  margin: auto;
+  background: url("https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/games/blackjack/mesaBJ.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZ2FtZXMvYmxhY2tqYWNrL21lc2FCSi5wbmciLCJpYXQiOjE3NTgwMjY0NjcsImV4cCI6MTc4OTU2MjQ2N30.JMW-1XI9biRVET3_36mVvK6MUpMvso3TbQQU9A2jESo") no-repeat center center;
+  background-size: cover;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.crupier {
-    position: absolute;
-    background-color: aqua;
-    width: 30px;
-    height: 30px;
+.cartas {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
 
+  img {
+    height: 90px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.5s ease-out;
+  }
+
+  /* Animación usuario → arriba derecha */
+  img.animando-jugador {
+    transform: translate(220px, -200px) scale(1.1);
+  }
+
+  /* Animación crupier → abajo derecha */
+  img.animando-crupier {
+    transform: translate(160px, 120px) scale(1.1);
+  }
 }
 
 .usuario {
-    position: absolute;
-    background-color: aqua;
-    width: 30px;
-    height: 30px;
-    bottom: 25vh;
-    right: 49vw;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.crupier {
+  text-align: center;
+}
+
+.acciones {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 10px;
+
+  button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #2d6cdf;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+      background: #1c4ea0;
+    }
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+
+  .creditos-box,
+  .resultado-box {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background: #2d6cdf;
+      color: white;
+      cursor: pointer;
+
+      &:hover {
+        background: #1c4ea0;
+      }
+    }
+  }
+}
+
+.txt
+{
+  color: #f6d26c;
+}
+
+.puntaje {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.6);
+  color: #f6d26c;
+  padding: 10px 20px;
+  border-radius: 10px;
 }
 
 .back {

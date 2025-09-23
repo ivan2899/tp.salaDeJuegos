@@ -63,7 +63,7 @@ export class RegisterComponent {
     });
   }
 
-    private traducirError(codigo: string): string {
+  private traducirError(codigo: string): string {
     switch (codigo) {
       case 'Invalid login credentials':
         return 'Credenciales inválidas. Verifique su Correo y Clave.';
@@ -73,6 +73,10 @@ export class RegisterComponent {
         return 'El usuario no existe en el sistema.';
       case 'Password should be at least 6 characters.':
         return 'La contraseña debe tener al menos 6 caracteres.';
+      case 'User already registered':
+        return 'El email ya se encuentra registrado.';
+      case 'Unable to validate email address: invalid format':
+        return 'El email no tiene un formato correcto';
       default:
         return 'Ocurrió un error inesperado. Intente nuevamente.';
     }

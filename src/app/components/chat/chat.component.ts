@@ -25,12 +25,10 @@ export class ChatComponent implements OnInit, OnDestroy {
   constructor() {}
 
   async ngOnInit() {
-    // 1️⃣ Cargar historial
     await this.loadMessages();
 
-    // 2️⃣ Suscripción en tiempo real
     this.channel = supabase
-      .channel('chat-room') // nombre del canal arbitrario
+      .channel('chat')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'chat' },
@@ -58,7 +56,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private async loadMessages() {
     const { data, error } = await supabase
-      .from<any, any>('chat') // ✅ Dos tipos genéricos, ambos any
+      .from<any, any>('chat')
       .select('*')
       .order('created_at', { ascending: true });
 
@@ -95,7 +93,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     // Guardar en Supabase
     const { error } = await supabase
-      .from<any, any>('chat') // ✅ Dos tipos genéricos
+      .from<any, any>('chat')
       .insert([{ email: this.actualUser, texto: messageToSend }]);
 
     if (error) {

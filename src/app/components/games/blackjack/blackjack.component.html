@@ -1,4 +1,12 @@
-<div class="container">
+<!-- Overlay créditos -->
+<div class="overlay" *ngIf="mostrandoCreditos">
+  <div class="creditos-box">
+    <p>Ingrese los créditos a apostar:</p>
+    <input type="number" [(ngModel)]="creditosApostados" />
+    <button (click)="confirmarCreditos()">Confirmar</button>
+  </div>
+</div>
+
     <div class="back" [routerLink]="'../../home'">
   <img
     src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/extra/back.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZXh0cmEvYmFjay5wbmciLCJpYXQiOjE3NTc0Njg3ODcsImV4cCI6MTc4OTAwNDc4N30.rdSYprJunkFLVbtM48iSsscUVATUC22rLdWtd5VPLDE"
@@ -10,14 +18,48 @@
     src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/extra/helpIcon.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZXh0cmEvaGVscEljb24ucG5nIiwiaWF0IjoxNzU3OTk4NTk5LCJleHAiOjE3ODk1MzQ1OTl9.zZ5VaLxmkzpN_8oRnS1772vBcPLuePc4bhUFvBRX3sA"
     alt="" class="imgHelp">
 </div>
-    <div class="crupier">
 
-    </div>
-    <div class="fondo">
-        <img src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/games/blackjack/mesaBJ.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZ2FtZXMvYmxhY2tqYWNrL21lc2FCSi5wbmciLCJpYXQiOjE3NTgwMjY0NjcsImV4cCI6MTc4OTU2MjQ2N30.JMW-1XI9biRVET3_36mVvK6MUpMvso3TbQQU9A2jESo" alt="">
+<!-- Overlay resultado -->
+<div class="overlay" *ngIf="resultado">
+  <div class="resultado-box">
+    <h2>{{ resultado }}</h2>
+    <p>Créditos: {{ creditos }}</p>
+    <button (click)="seguirJugando()" *ngIf="creditos > 0">Seguir jugando</button>
+  </div>
+</div>
 
+<div class="mesa">
+  <!-- Crupier -->
+  <div class="crupier">
+    <div class="cartas">
+      <img *ngFor="let carta of crupier; let i = index"
+           [src]="(i===1 && crupierOculta) ? 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/games/mayormenor/carBlue.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZ2FtZXMvbWF5b3JtZW5vci9jYXJCbHVlLnBuZyIsImlhdCI6MTc1Nzk5ODEwNSwiZXhwIjoxNzg5NTM0MTA1fQ.y_2NMtibRlctc2LRdiL5VRz3HhxCnfSXWhHy3IBvWQI' : carta.image"
+           [class.animando-jugador]="carta.animando && carta.tipo === 'jugador'"
+           [class.animando-crupier]="carta.animando && carta.tipo === 'crupier'"
+           alt="carta">
     </div>
-    <div class="usuario">
+    <p class="txt">Puntos: {{ calcularPuntos(crupier, crupierOculta) }}</p>
+  </div>
 
+  <!-- Acciones -->
+  <div class="acciones" *ngIf="turnoUsuario">
+    <button (click)="pedirCarta()">Pedir</button>
+    <button (click)="plantarse()">Plantarse</button>
+  </div>
+
+  <!-- Jugador -->
+  <div class="usuario">
+    <div class="cartas">
+      <img *ngFor="let carta of jugador"
+           [src]="carta.image"
+           [class.animando-jugador]="carta.animando && carta.tipo === 'jugador'"
+           [class.animando-crupier]="carta.animando && carta.tipo === 'crupier'"
+           alt="carta">
     </div>
+    <p class="txt">Puntos: {{ calcularPuntos(jugador) }}</p>
+  </div>
+
+    <div class="puntaje">
+    <p>Créditos: {{creditosTemp}}</p>
+  </div>
 </div>
