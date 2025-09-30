@@ -1,11 +1,9 @@
-import { Component, EventEmitter, Output, output } from '@angular/core';
+import { Component} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from '@angular/router';
-import { createClient } from '@supabase/supabase-js';
-import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
+import { SupabaseService } from '../../services/supabase.service';
 
-const supabase = createClient(environment.apiUrl, environment.publicAnonKey);
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -17,57 +15,36 @@ export class LoginComponent {
   username: string = "";
   password: string = "";
 
-  constructor(private router: Router) {
-
-  }
-
-  logUser() {
-    supabase.from('logs')
-      .insert([
-        { name: this.username }
-      ])
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Error al registrar en log:', error.message);
-          alert(error.message);
-        }
-      });
-  }
+  constructor(
+    private router: Router,
+    private supabaseService: SupabaseService
+  ) {}
 
   async login() {
     let valido = true;
     let huboError = true;
     let mensaje = '';
 
-    if (this.username == '' || this.password == '') {
+    if (!this.username || !this.password) {
       mensaje = "Hay campos incompletos. Verifique su Correo y Clave";
-      valido = false;
-    } else if ((this.username == undefined || this.password == undefined) || (!this.username || !this.password)) {
-      mensaje = "Hay campos invalidos o vacíos. Verifique su Correo y Clave";
       valido = false;
     }
 
     if (valido) {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: this.username,
-        password: this.password,
-      });
+      const { data, error } = await this.supabaseService.signIn(this.username, this.password);
 
       if (error) {
         mensaje = this.traducirError(error.message);
       } else {
-        this.logUser();
+        await this.supabaseService.logUser(this.username);
         huboError = false;
         this.router.navigateByUrl('home', {
-          state: {
-            username: this.username,
-          }
+          state: { username: this.username }
         });
       }
     }
 
     if (huboError) {
-
       Swal.fire({
         title: 'Error',
         text: mensaje,

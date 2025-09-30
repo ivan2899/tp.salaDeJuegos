@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, NgClass } from '@angular/common';
 import Swal from 'sweetalert2';
+import { SupabaseService } from '../../services/supabase.service';
 
 const supabase = createClient(environment.apiUrl, environment.publicAnonKey);
 @Component({
@@ -15,42 +16,61 @@ const supabase = createClient(environment.apiUrl, environment.publicAnonKey);
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
-  username: string;
-  password: string;
+   username: string = '';
+  password: string = '';
   passwordConfirm: string = '';
   name: string = '';
 
-  constructor(private router: Router) {
-    this.username = '';
-    this.password = '';
+  constructor(
+    private router: Router,
+    private supabaseService: SupabaseService
+  ) {}
+
+  async register() {
+    if (!this.name || !this.username || !this.password || !this.passwordConfirm) {
+      this.error("Hay campos inválidos o vacíos. Verifique su Correo y Clave");
+      return;
+    }
+
+    if (this.password !== this.passwordConfirm) {
+      this.error("Las claves no coinciden");
+      return;
+    }
+
+    // 🔹 Registro en Supabase Auth
+    const { data, error } = await this.supabaseService.signUp(this.username, this.password);
+
+    if (error) {
+      this.error(this.traducirError(error.message));
+      return;
+    }
+
+    if (data.user) {
+      await this.saveUserData(data.user);
+    }
   }
 
-  register() {
-    if ((!this.name || !this.username || !this.password || !this.passwordConfirm) || (this.name == undefined || this.username == undefined || this.password == undefined || this.passwordConfirm == undefined)) {
-      this.error("Hay campos invalidos o vacíos. Verifique su Correo y Clave");
-    } else if (this.username == '' || this.password == '' || this.name == '' || this.passwordConfirm == '') {
-      this.error("Hay campos incompletos. Verifique su Correo y Clave");
+  private async saveUserData(user: User) {
+    // 🔹 Verificar si ya existe
+    const { data: existe, error: errorCheck } = await this.supabaseService.userExists(this.username);
+
+    if (errorCheck) {
+      this.error("Hubo un problema al verificar el usuario");
+      return;
+    }
+
+    if (existe && existe.length > 0) {
+      this.error("El usuario ya está registrado");
+      return;
+    }
+
+    // 🔹 Guardar usuario en la tabla
+    const { error } = await this.supabaseService.saveUserData(user, this.name, this.username);
+
+    if (error) {
+      this.error("Hubo un problema al registrar el usuario");
     } else {
-
-      if (RegisterComponent.validarClave(this.password, this.passwordConfirm)) {
-
-        supabase.auth.signUp({
-          email: this.username,
-          password: this.password,
-        }).then(({ data, error }) => {
-          if (error) {
-            console.error('Error:', error.message);
-            this.error(this.traducirError(error.message));
-          } else {
-            console.log('User registered:', data.user);
-            this.saveUserData(data.user!);
-          }
-        }
-        );
-      }
-      else {
-        this.error("Las claves no coinciden");
-      }
+      this.router.navigate(['/home']);
     }
   }
 
@@ -80,43 +100,5 @@ export class RegisterComponent {
       default:
         return 'Ocurrió un error inesperado. Intente nuevamente.';
     }
-  }
-
-  private static validarClave(a: string, b: string): boolean {
-    return a == b;
-  }
-
-  saveUserData(user: User) {
-
-    supabase.from('datos-usuarios')
-      .select('*')
-      .eq('email', this.username)
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Error al verificar usuario:', error.message);
-          this.error("Hubo un problema al verificar el usuario");
-          return;
-        }
-
-        if (data && data.length > 0) {
-          this.error("El usuario ya está registrado");
-        } else {
-          supabase.from('datos-usuarios')
-            .insert([
-              { authId: user.id, name: this.name, email: this.username }
-            ])
-            .then(({ data, error }) => {
-              if (error) {
-                console.error('Error al registrar:', error.message);
-                alert(error.message);
-                this.error("El usuario ya está registrado");
-
-              } else {
-                this.router.navigate(['/home']);
-              }
-            });
-        }
-      });
-
   }
 }

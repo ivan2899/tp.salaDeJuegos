@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { LoginComponent } from '../login/login.component';
-import { createClient } from '@supabase/supabase-js';
-import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
-
-const supabase = createClient(environment.apiUrl, environment.publicAnonKey);
+import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-layout',
@@ -16,26 +13,27 @@ const supabase = createClient(environment.apiUrl, environment.publicAnonKey);
   styleUrl: './layout.component.scss'
 })
 export class LayoutComponent {
-isLoggedIn = false;
+ isLoggedIn = false;
   email = '';
   name = '';
 
   private authSub: any;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private supabaseService: SupabaseService
+  ) {}
 
   async ngOnInit() {
     // Obtener usuario si ya está logueado
-    const { data } = await supabase.auth.getUser();
-    const metadata = data.user?.user_metadata;
-
+    const { data } = await this.supabaseService.getCurrentUser();
     if (data.user) {
       this.isLoggedIn = true;
       this.name = data.user.user_metadata?.['name'] || data.user.email;
     }
 
     // Escuchar cambios de login/logout
-    this.authSub = supabase.auth.onAuthStateChange((_event, session) => {
+    this.authSub = this.supabaseService.onAuthStateChange((_event, session) => {
       if (session?.user) {
         this.isLoggedIn = true;
         this.name = session.user.user_metadata?.['name'] || session.user.email;
@@ -47,11 +45,10 @@ isLoggedIn = false;
   }
 
   private async logoutInt() {
-    await supabase.auth.signOut();
+    await this.supabaseService.signOut();
     this.router.navigate(['/login']);
     this.isLoggedIn = false;
   }
-
 
   logout() {
     Swal.fire({
@@ -69,7 +66,6 @@ isLoggedIn = false;
       }
     });
   }
-
 
   ngOnDestroy() {
     if (this.authSub?.unsubscribe) {

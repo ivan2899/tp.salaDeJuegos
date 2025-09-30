@@ -9,7 +9,7 @@
 
   <div *ngIf="isLoggedIn; else guest" class="d-flex align-items-center gap-3">
     <div class="text-end">
-      <div class="small text-primary">{{ email }}</div>
+      <div class="small text-primary">{{ name }}</div>
     </div>
     <button class="btn-nav" (click)="logout()">Log Out</button>
   </div>

@@ -4,6 +4,7 @@ import { AboutMeComponent } from './components/about-me/about-me.component';
 import { LoginComponent } from './components/login/login.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { RegisterComponent } from './components/register/register.component';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: "full" },
@@ -25,7 +26,8 @@ export const routes: Routes = [
     },
     {
         path: 'juegos',
-        loadChildren: () => import('./modulos/juegos/juegos.module').then(m => m.JuegosModule)
+        loadChildren: () => import('./modulos/juegos/juegos.module').then(m => m.JuegosModule),
+        canActivate: [authGuard]
     },
     {
         path: 'encuesta',
