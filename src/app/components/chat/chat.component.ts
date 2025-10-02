@@ -13,19 +13,28 @@ import { SupabaseService } from '../../services/supabase.service';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit, OnDestroy {
-   @ViewChild('chatBody') private chatBody!: ElementRef<HTMLDivElement>;
+    @ViewChild('chatBody') private chatBody!: ElementRef<HTMLDivElement>;
 
   newMessage: string = '';
   messages: Message[] = [];
-  actualUser: string = 'navebo4226@aperiol.com';
+  actualUser: string = '';
   private channel!: RealtimeChannel;
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService) { }
 
   async ngOnInit() {
-    // cargar mensajes
-    const { data, error } = await this.supabaseService.getMessages();
-    if (!error && data) {
+    const { data: { user }, error } = await this.supabaseService.getCurrentUser();
+    if (error) {
+      console.error('Error al obtener usuario:', error.message);
+      return;
+    }
+
+    if (user) {
+      this.actualUser = user.email ?? '';
+    }
+
+    const { data, error: msgError } = await this.supabaseService.getMessages();
+    if (!msgError && data) {
       this.messages = data.map((msg: any) => ({
         text: msg.text,
         type: msg.email === this.actualUser ? 'sent' : 'received',
@@ -35,7 +44,6 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.scrollToBottom();
     }
 
-    // suscripción a nuevos mensajes
     this.channel = this.supabaseService.subscribeToMessages((msg) => {
       msg.type = msg.email === this.actualUser ? 'sent' : 'received';
       this.messages.push(msg);
@@ -55,7 +63,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     const messageToSend = this.newMessage.trim();
     const now = new Date().toISOString();
 
-    // Mostrar mensaje inmediatamente
     this.messages.push({
       text: messageToSend,
       type: 'sent',
@@ -64,7 +71,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
     this.scrollToBottom();
 
-    // Guardar en Supabase
     const { error } = await this.supabaseService.sendMessage(this.actualUser, messageToSend);
     if (error) {
       console.error('Error al registrar el mensaje:', error.message);

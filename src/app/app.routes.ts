@@ -4,7 +4,10 @@ import { AboutMeComponent } from './components/about-me/about-me.component';
 import { LoginComponent } from './components/login/login.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { RegisterComponent } from './components/register/register.component';
+
+//Guards
 import { authGuard } from './guards/auth.guard';
+import { surveyGuard } from './guards/survey.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: "full" },
@@ -27,11 +30,22 @@ export const routes: Routes = [
     {
         path: 'juegos',
         loadChildren: () => import('./modulos/juegos/juegos.module').then(m => m.JuegosModule),
-        canActivate: [authGuard]
+        canActivateChild: [authGuard]
     },
     {
         path: 'encuesta',
-        loadComponent: () => import('./components/survey/survey.component').then(m => m.SurveyComponent)
+        loadComponent: () => import('./components/survey/survey.component').then(m => m.SurveyComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path: 'encuesta-resultados',
+        loadComponent: () => import('./components/survey-results/survey-results.component').then(m => m.SurveyResultsComponent),
+        canActivate: [surveyGuard]
+    },
+    {
+        path: 'juegos-resultados',
+        loadComponent: () => import('./components/game-results/game-results.component').then(m => m.GameResultsComponent),
+        canActivate: [authGuard]
     },
     { path: '**', component: PageNotFoundComponent }
 

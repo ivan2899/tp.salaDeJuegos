@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CartasService } from '../../../services/cartas.service';
-import Swal from 'sweetalert2';
+import { MessagesService } from '../../../services/messages.service';
+import { SupabaseService } from '../../../services/supabase.service';
 
 interface Carta {
   image: string;
-  value: string; // la API devuelve string tipo "KING", "5", "ACE"
+  value: string;
   animando?: boolean;
   tipo?: 'jugador' | 'crupier';
 }
@@ -16,31 +17,48 @@ interface Carta {
   styleUrl: './blackjack.component.scss'
 })
 export class BlackjackComponent {
-   jugador: Carta[] = [];
+  jugador: Carta[] = [];
   crupier: Carta[] = [];
   crupierOculta: boolean = true;
   turnoUsuario: boolean = false;
 
   creditos: number = 20;
   creditosApostados: number = 0;
-  creditosTemp: number = 0;
   mostrandoCreditos: boolean = true;
 
+  vidas: number = 3;
   deckId: string = '';
-
-  // Nuevo → estado final de partida
   resultado: string | null = null;
 
-  constructor(private cartasService: CartasService) {}
+  rondasJugadas: number = 0;
+  maxRondas: number = 10;
+
+  cartaOculta: string = 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/mayormenor/carBlue.png';
+
+  constructor(private cartasService: CartasService, private messagesService: MessagesService, private supabaseService: SupabaseService) { }
 
   confirmarCreditos() {
-    if (this.creditos == 0 || ((this.creditos - this.creditosApostados) < 0)) {return};
-    this.creditosTemp = (this.creditos - this.creditosApostados)
-    this.mostrandoCreditos = false;
-    this.iniciarPartida();
+    if (this.creditosApostados != 0) {
+
+      if (!this.creditosApostados || this.creditosApostados > this.creditos) {
+        this.messagesService.errorMessage('Créditos insuficientes', `No puedes apostar más créditos de los que tienes, tienes ${this.creditos} créditos`)
+        return;
+      }
+      this.mostrandoCreditos = false;
+      this.iniciarPartida();
+    }
+    else {
+      this.messagesService.errorMessage('Créditos infinitos', `No puedes apostar 0 créditos`)
+    }
   }
 
   iniciarPartida() {
+    if (this.rondasJugadas >= this.maxRondas || this.creditos <= 0) {
+      this.messagesService.endGame('Juego terminado', `Se han jugado ${this.rondasJugadas} rondas. Créditos finales: ${this.creditos}`)
+      this.supabaseService.gameLog(this.creditos, 'Blackjack');
+      return;
+    }
+
     this.jugador = [];
     this.crupier = [];
     this.crupierOculta = true;
@@ -62,6 +80,13 @@ export class BlackjackComponent {
       setTimeout(() => {
         this.crupier.push(this.cartaConAnimacion(c4, 'crupier'));
         this.turnoUsuario = true;
+
+        const puntosIniciales = this.calcularPuntos(this.jugador);
+        if (puntosIniciales === 21) {
+          this.turnoUsuario = false;
+          this.crupierOculta = false;
+          this.turnoCrupier(true);
+        }
       }, 1200);
     });
   }
@@ -100,58 +125,63 @@ export class BlackjackComponent {
     loop();
   }
 
-  finalizarPartida() {
+  async finalizarPartida() {
     const puntosJugador = this.calcularPuntos(this.jugador);
     const puntosCrupier = this.calcularPuntos(this.crupier);
 
-    setTimeout(() => {
-      if (puntosJugador > 21) {
-        this.resultado = 'Te pasaste 😢';
-        this.creditos -= this.creditosApostados;
-      } else if (puntosCrupier > 21 || puntosJugador > puntosCrupier) {
-        this.resultado = 'Ganaste 🎉';
-        this.creditos += (this.creditosApostados * 2);
-      } else if (puntosJugador < puntosCrupier) {
-        this.resultado = 'Perdiste 😢';
-        this.creditos -= this.creditosApostados;
-      } else {
-        this.resultado = 'Empate 🤝';
-        this.creditos += this.creditosApostados;
+    await new Promise(res => setTimeout(res, 3000));
+
+    if (puntosJugador > 21 || (puntosJugador < puntosCrupier && puntosCrupier <= 21)) {
+      this.resultado = 'Perdiste 😢';
+      this.creditos -= this.creditosApostados;
+      this.vidas--;
+      this.messagesService.wrongAnswer(`Vidas restantes: ${this.vidas}`)
+    } else if (puntosJugador > puntosCrupier || puntosCrupier > 21) {
+      this.resultado = 'Ganaste 🎉';
+      this.creditos += this.creditosApostados;
+      this.messagesService.winGame('¡Ganaste!', `Créditos actuales: ${this.creditos}`)
+    } else {
+      this.resultado = 'Empate 🤝';
+      this.messagesService.equalMessage('Empate', `Créditos actuales: ${this.creditos}`);
+    }
+
+    this.rondasJugadas++;
+
+    if (this.vidas > 0 && this.rondasJugadas < this.maxRondas && this.creditos > 0) {
+      this.resultado = null;
+      this.creditosApostados = 0;
+      this.mostrandoCreditos = true;
+    } else {
+      const isConfirmed = await this.messagesService.endGame('Juego terminado', `💀 Te quedaste sin vidas, créditos finales: ${this.creditos}`)
+      this.supabaseService.gameLog(this.creditos, 'Blackjack');
+
+      if (isConfirmed) {
+        this.reiniciarJuego();
       }
-    }, 2000);
+    }
+  }
+
+  reiniciarJuego() {
+    this.creditos = 20;
+    this.vidas = 3;
+    this.rondasJugadas = 0;
+    this.creditosApostados = 0;
+    this.mostrandoCreditos = true;
+    this.resultado = null;
   }
 
   calcularPuntos(mano: Carta[], ocultarSegunda: boolean = false): number {
     let total = 0;
     let ases = 0;
-
     mano.forEach((carta, i) => {
-      if (ocultarSegunda && i === 1) return; // no cuenta la carta oculta
-      let valor = carta.value;
-      if (['KING', 'QUEEN', 'JACK'].includes(valor)) {
-        total += 10;
-      } else if (valor === 'ACE') {
-        ases++;
-        total += 11;
-      } else {
-        total += Number(valor);
-      }
+      if (ocultarSegunda && i === 1) return;
+      const valor = carta.value;
+      if (['KING', 'QUEEN', 'JACK'].includes(valor)) total += 10;
+      else if (valor === 'ACE') { ases++; total += 11; }
+      else total += Number(valor);
     });
-
-    while (total > 21 && ases > 0) {
-      total -= 10;
-      ases--;
-    }
-
+    while (total > 21 && ases > 0) { total -= 10; ases--; }
     return total;
-  }
-
-  seguirJugando() {
-    if (this.creditos > 0) {
-      this.iniciarPartida();
-    } else {
-      this.resultado = 'Te quedaste sin créditos 💸';
-    }
   }
 
   private cartaConAnimacion(carta: any, tipo: 'jugador' | 'crupier'): Carta {
@@ -160,12 +190,7 @@ export class BlackjackComponent {
     return c;
   }
 
-   ayuda() {
-    Swal.fire({
-      title: "Cómo funciona?",
-      text: "El blackjack es un juego en el que estas tú contra la casa (en este caso la máquina), se trata de juntar cartas hasta llegar a 21 o acercarse lo máximo posible, pero cuidado que si te pásas pierdes, la máquina debe pedir hasta tener 17, es decir con 16 pide y con 17 se queda",
-      icon: "question",
-      background: "#ffa"
-    });
+  ayuda() {
+    this.messagesService.helpMessage('Blackjack: llega a 21 sin pasarte. Cada ronda apuestas créditos, si pierdes pierdes una vida.');
   }
 }

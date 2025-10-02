@@ -1,0 +1,53 @@
+<div class="wrapper">
+
+  <h2>Resultados de Juegos</h2>
+
+  <!-- Filtro -->
+  <label>Filtrar por juego:</label>
+  <select [(ngModel)]="filtroJuego" (change)="filtrarPorJuego()">
+    <option value="">Todos</option>
+    <option *ngFor="let j of juegos" [value]="j">{{ j }}</option>
+  </select>
+
+  <!-- Loading -->
+  <div *ngIf="loading">Cargando resultados...</div>
+
+  <!-- Sin resultados -->
+  <div *ngIf="!loading && gameResults.length === 0">
+    No hay resultados todavía.
+  </div>
+
+  <!-- Tabla -->
+  <table *ngIf="!loading && gameResults.length > 0" class="fancy-table">
+    <thead>
+      <tr>
+        <th>Juego</th>
+        <th>Email</th>
+        <th>Puntos</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let result of gameResults">
+        <td>{{ result.juego }}</td>
+        <td>{{ result.email }}</td>
+        <td>{{ result.puntos }}</td>
+        <td>{{ formatTime(result.created_at) }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Paginación -->
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">&lt;</button>
+
+    <button *ngFor="let page of [].constructor(totalPages); let i = index"
+            (click)="goToPage(i + 1)"
+            [class.active]="currentPage === i + 1">
+      {{ i + 1 }}
+    </button>
+
+    <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">&gt;</button>
+  </div>
+
+</div>

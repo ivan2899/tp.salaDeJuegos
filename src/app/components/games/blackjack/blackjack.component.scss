@@ -3,7 +3,7 @@
   width: 900px;
   height: 550px;
   margin: auto;
-  background: url("https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/games/blackjack/mesaBJ.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZ2FtZXMvYmxhY2tqYWNrL21lc2FCSi5wbmciLCJpYXQiOjE3NTgwMjY0NjcsImV4cCI6MTc4OTU2MjQ2N30.JMW-1XI9biRVET3_36mVvK6MUpMvso3TbQQU9A2jESo") no-repeat center center;
+  background: url("https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/blackjack/mesaBJ.png") no-repeat center center;
   background-size: cover;
   padding: 20px;
   box-sizing: border-box;
@@ -22,12 +22,10 @@
     transition: transform 0.5s ease-out;
   }
 
-  /* Animación usuario → arriba derecha */
   img.animando-jugador {
     transform: translate(220px, -200px) scale(1.1);
   }
 
-  /* Animación crupier → abajo derecha */
   img.animando-crupier {
     transform: translate(160px, 120px) scale(1.1);
   }
@@ -38,6 +36,7 @@
   bottom: 0;
   width: 100%;
   text-align: center;
+  margin-bottom: 5px;
 }
 
 .crupier {

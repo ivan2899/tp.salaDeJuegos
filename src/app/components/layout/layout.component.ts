@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { LoginComponent } from '../login/login.component';
 import { CommonModule } from '@angular/common';
-import Swal from 'sweetalert2';
 import { SupabaseService } from '../../services/supabase.service';
+import { MessagesService } from '../../services/messages.service';
 
 @Component({
   selector: 'app-layout',
@@ -13,7 +13,7 @@ import { SupabaseService } from '../../services/supabase.service';
   styleUrl: './layout.component.scss'
 })
 export class LayoutComponent {
- isLoggedIn = false;
+  isLoggedIn = false;
   email = '';
   name = '';
 
@@ -21,18 +21,17 @@ export class LayoutComponent {
 
   constructor(
     private router: Router,
-    private supabaseService: SupabaseService
-  ) {}
+    private supabaseService: SupabaseService,
+    private messagesService: MessagesService
+  ) { }
 
   async ngOnInit() {
-    // Obtener usuario si ya está logueado
     const { data } = await this.supabaseService.getCurrentUser();
     if (data.user) {
       this.isLoggedIn = true;
       this.name = data.user.user_metadata?.['name'] || data.user.email;
     }
 
-    // Escuchar cambios de login/logout
     this.authSub = this.supabaseService.onAuthStateChange((_event, session) => {
       if (session?.user) {
         this.isLoggedIn = true;
@@ -50,21 +49,9 @@ export class LayoutComponent {
     this.isLoggedIn = false;
   }
 
-  logout() {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Volverás al inicio y deberás loguear',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí',
-      cancelButtonText: 'No'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.logoutInt();
-      }
-    });
+  async logout() {
+    const isConfirmed = await this.messagesService.warningMessage('¿Estás seguro?', 'Volverás al inicio y deberás loguear');
+    if (isConfirmed) this.logoutInt();
   }
 
   ngOnDestroy() {

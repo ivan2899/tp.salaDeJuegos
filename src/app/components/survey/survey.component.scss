@@ -1,20 +1,20 @@
 .wrapper {
-  width: 100%; /* que ocupe toda la pantalla */
-  max-width: 1200px; /* límite para que no se estire demasiado */
+  width: 100%;
+  max-width: 1200px;
   margin: auto;
+  margin-top: 20px;
   background-color: transparent;
   border: 2px solid rgba(255, 255, 255, .2);
   backdrop-filter: blur(40px);
   box-shadow: 0 0 10px rgba(0, 0, 0, .2);
   color: #fff;
   border-radius: 10px;
-  padding: 30px 40px;
+  padding: 20px 30px;
 }
 
-/* Grid para dividir la encuesta en 3 columnas */
 .grid-container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr; /* 3 columnas iguales */
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
 }
 
@@ -31,18 +31,16 @@
   padding-bottom: 5px;
 }
 
-/* Inputs */
+/* Inputs y textarea */
 .wrapper .input-box {
   position: relative;
   width: 100%;
-  height: 50px;
   margin: 20px 0;
 }
 
 .input-box input,
 textarea {
   width: 100%;
-  height: 50%;
   background: transparent;
   border: 2px solid rgba(255, 255, 255, .2);
   border-radius: 10px;
@@ -52,13 +50,13 @@ textarea {
   outline: none;
 }
 
-.input-box input{
-    height: 100% !important;
+.input-box input {
+  height: 50px;
 }
 
 textarea {
-  min-height: 70px;
-  max-height: 250px;
+  min-height: 100px;
+  max-height: 200px;
   resize: vertical;
 }
 
@@ -67,7 +65,6 @@ textarea::placeholder {
   color: #fff;
 }
 
-/* Iconos dentro de inputs */
 .input-box i {
   position: absolute;
   right: 20px;
@@ -97,34 +94,103 @@ textarea::placeholder {
   background: #ddd;
 }
 
-/* Footer del formulario */
+.btn[disabled] {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
 .form-footer {
   margin-top: 30px;
   text-align: center;
 }
 
-/* Checkboxes y Radios */
+/* Radios y checkboxes */
 input[type="checkbox"], 
 input[type="radio"] {
+  accent-color: #f6d26c;
   margin-right: 8px;
-  accent-color: #fff; /* color de los checks/radios */
+  cursor: pointer;
 }
 
-/* Responsive: en pantallas chicas se apilan */
+label {
+  cursor: pointer;
+}
+
+/* Errores */
+.error-box {
+  background: #f2f2f2;
+  color: red;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  display: inline-block;
+}
+
 @media (max-width: 900px) {
   .grid-container {
     grid-template-columns: 1fr;
   }
 }
 
-/* Chrome, Safari, Edge, Opera */
+/* Número sin flechitas */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
-/* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+/* Back button */
+.back {
+  position: absolute;
+  top: 75px;
+  left: 10px;
+}
+
+.imgBack {
+  width: 70px;
+  cursor: pointer;
+}
+
+/* Botón obtener resultados */
+.encuesta {
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  background: #f6d26c;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.encuesta:hover {
+  background: #ffd8cf;
+  transform: translateY(-2px);
+}
+
+.divEncuesta {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.btn:disabled {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.error-box {
+  background: #f2f2f2;
+  color: red;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  margin-top: 5px;
 }

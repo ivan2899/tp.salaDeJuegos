@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-
-import Swal from 'sweetalert2';
 import { JuegosModule } from '../../modulos/juegos/juegos.module';
 import { ChatComponent } from '../chat/chat.component';
 import { CommonModule } from '@angular/common';
-
-
+import { SupabaseService } from '../../services/supabase.service';
+import { MessagesService } from '../../services/messages.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -19,7 +16,7 @@ export class HomeComponent {
   username!: string;
   mostrarChat = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private supabaseService: SupabaseService, private messagesService: MessagesService) {
     const nav = this.router.getCurrentNavigation();
     if (nav?.extras.state) {
       const { username } = nav.extras.state;
@@ -28,46 +25,33 @@ export class HomeComponent {
     }
   }
 
-  verificar(ruta: string) {
-   /* if ((this.username == undefined || this.username == '' || !this.username)) {
-      Swal.fire({
-        title: "No iniciaste sesión",
-        text: "No puedes ingresar porque no iniciaste sesión, puedes redirigirte a la pag de inicio para ingresar",
-        icon: "error",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Cancelar",
-        confirmButtonText: "Si, redirigir"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.router.navigateByUrl('login');
+  async verificar(ruta: string) {
+    switch (ruta) {
+      case "chat":
+        const user = await this.supabaseService.getCurrentUser();
+        if (user?.data.user) {
+          this.mostrarChat = !this.mostrarChat;
+        } else {
+          this.messagesService.anonymous();
+          this.mostrarChat = false;
         }
-      });
-    }
-    else {*/
-      switch (ruta) {
-        case "chat":
-           this.mostrarChat = !this.mostrarChat;
-           console.log(this.mostrarChat);
-          break;
-        case "ahorcado":
-          this.router.navigateByUrl('juegos/ahorcado');
-          break;
-        case "mayormenor":
-          this.router.navigateByUrl('juegos/mayormenor');
-          break;
-        case "preguntados":
-          this.router.navigateByUrl('juegos/preguntados');
-          break;
-        case "blackjack":
-          this.router.navigateByUrl('juegos/blackjack');
-          break;
-     // }
+        break;
+      case "ahorcado":
+        this.router.navigateByUrl('juegos/ahorcado');
+        break;
+      case "mayormenor":
+        this.router.navigateByUrl('juegos/mayormenor');
+        break;
+      case "preguntados":
+        this.router.navigateByUrl('juegos/preguntados');
+        break;
+      case "blackjack":
+        this.router.navigateByUrl('juegos/blackjack');
+        break;
     }
   }
 
-  verificarAdm(){
-    this.router.navigateByUrl('/encuesta');
+  redireccion(url: string) {
+    this.router.navigate([url]);
   }
 }

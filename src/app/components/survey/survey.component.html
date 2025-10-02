@@ -1,65 +1,102 @@
+<div class="back" [routerLink]="'../'">
+    <img src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/extra/back.png" alt=""
+        class="imgBack">
+</div>
+
 <div class="wrapper">
-    <form action="">
+    <form [formGroup]="encuesta" (ngSubmit)="enviarForm()">
         <div class="grid-container">
 
-            <!-- COLUMNA IZQUIERDA -->
+            <!-- Columna 1 - Datos -->
             <div class="col">
                 <h2>Datos</h2>
                 <div class="input-box user">
-                    <input type="text" name="nombre" placeholder="Nombre completo">
+                    <input type="text" formControlName="nombre" placeholder="Nombre completo">
                     <i class='bx bxs-user'></i>
                 </div>
+                <ng-container *ngIf="nombre?.hasError('pattern')">
+                    <small class="error-box">Colocar su nombre y apellido (Sólo puede contener letras)</small>
+                </ng-container>
+
                 <div class="input-box">
-                    <input type="number" name="edad" placeholder="Edad">
+                    <input type="number" formControlName="edad" placeholder="Edad" (keypress)="soloNumeros($event)">
                     <i class='bx bxs-cake'></i>
                 </div>
+                <ng-container *ngIf="edad?.hasError('min') || edad?.hasError('max')">
+                    <small class="error-box">La edad debe estar entre 18 y 99 años</small>
+                </ng-container>
+
                 <div class="input-box">
-                    <input type="text" name="tel" placeholder="Número de teléfono">
+                    <input type="number" formControlName="telefono" placeholder="Número de teléfono"
+                        (keypress)="soloNumeros($event)">
                     <i class='bx bxs-phone'></i>
                 </div>
+                <ng-container
+                    *ngIf="telefono?.hasError('pattern') || telefono?.hasError('minlength') || telefono?.hasError('maxlength')">
+                    <small class="error-box">Debe colocar 11 y los siguientes 8 dígitos, sin espacios</small>
+                </ng-container>
             </div>
 
-            <!-- COLUMNA CENTRAL -->
+            <!-- Columna 2 - Respuestas -->
             <div class="col">
                 <h2>Respuestas</h2>
                 <div>
                     <p>¿Qué juego te gustó?</p>
-                    <input type="checkbox" name="juego" id="blackjack" value="blackjack">
-                    <label for="blackjack">Blackjack</label><br>
-                    <input type="checkbox" name="juego" id="preguntados" value="preguntados">
-                    <label for="preguntados">Preguntados</label><br>
-                    <input type="checkbox" name="juego" id="mayormenor" value="mayormenor">
-                    <label for="mayormenor">Mayor o menor</label><br>
-                    <input type="checkbox" name="juego" id="ahorcado" value="ahorcado">
-                    <label for="ahorcado">Ahorcado</label><br>
+
+                    <div formArrayName="juegos">
+                        <div *ngFor="let juego of juegos; let i = index">
+                            <label>
+                                <input type="checkbox" [formControlName]="i">
+                                {{ juego }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div *ngIf="juegosFormArray.invalid && encuesta.touched" class="error-box">
+                        Debes seleccionar al menos un juego
+                    </div>
                 </div>
+
                 <br>
                 <div>
-                    <p>¿Qué te pareció la dificultad de los juegos?</p>
-                    <input type="radio" name="encuesta" id="facil" value="facil">
-                    <label for="facil">Fácil</label><br>
-                    <input type="radio" name="encuesta" id="medio" value="medio">
-                    <label for="medio">Medio</label><br>
-                    <input type="radio" name="encuesta" id="dificil" value="dificil">
-                    <label for="dificil">Difícil</label><br>
-                    <input type="radio" name="encuesta" id="imposible" value="imposible">
-                    <label for="imposible">Imposible de completar</label>
+                    <p>¿Qué te pareció la dificultad?</p>
+                    <label>
+                        <input type="radio" value="Facil" formControlName="dificultad"> Fácil
+                    </label><br>
+                    <label>
+                        <input type="radio" value="Medio" formControlName="dificultad"> Medio
+                    </label><br>
+                    <label>
+                        <input type="radio" value="Dificil" formControlName="dificultad"> Difícil
+                    </label><br>
+                    <label>
+                        <input type="radio" value="Imposible" formControlName="dificultad"> Imposible
+                    </label>
+                </div>
+                <div *ngIf="encuesta.get('dificultad')?.invalid && encuesta.touched" class="error-box">
+                    Debes seleccionar una dificultad
                 </div>
             </div>
 
-            <!-- COLUMNA DERECHA -->
+            <!-- Columna 3 - Sugerencias -->
             <div class="col">
                 <h2>Sugerencias</h2>
-                <p>En caso de que quieras dejar una sugerencia será recibida. Muchas gracias</p>
-                <textarea name="sugerencia" id="sugerencia"></textarea><br>
-                <input type="radio" id="no" name="sugerenciaRadio" value="no">
-                <label for="no">No dejar sugerencia</label>
+                <p>Si querés dejar una sugerencia será recibida. ¡Muchas gracias!</p>
+                <textarea formControlName="sugerencia" placeholder="Escribe tu sugerencia..."></textarea><br>
+
+                <label>
+                    <input type="radio" value="no" formControlName="sugerenciaRadio"> No dejar sugerencia
+                </label>
             </div>
 
         </div>
 
         <div class="form-footer">
-            <button type="button" class="btn">Enviar</button>
+            <button [disabled]="encuesta.invalid" type="submit" class="btn">Enviar</button>
         </div>
     </form>
+</div>
+
+<div class="divEncuesta">
+    <button class="encuesta" (click)="redireccion()">Obtener resultados</button>
 </div>

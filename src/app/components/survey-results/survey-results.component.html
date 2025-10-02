@@ -1,0 +1,53 @@
+<div class="back" [routerLink]="'/encuesta'">
+    <img src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/extra/back.png" alt=""
+        class="imgBack">
+</div>
+
+<!-- Loading -->
+<div *ngIf="loading">Cargando resultados...</div>
+
+<!-- Sin resultados -->
+<div *ngIf="!loading && surveyResults.length === 0">
+  No hay resultados todavía.
+</div>
+
+<!-- Tabla de resultados -->
+<table *ngIf="!loading && surveyResults.length > 0" class="fancy-table">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Edad</th>
+      <th>Teléfono</th>
+      <th>Juego que le gustó</th>
+      <th>Dificultad</th>
+      <th>Sugerencia</th>
+      <th>Usuario</th>
+      <th>Hora</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let result of surveyResults">
+      <td>{{ result.name }}</td>
+      <td>{{ result.age }}</td>
+      <td>{{ result.phone }}</td>
+      <td>{{ result.game }}</td>
+      <td>{{ result.difficult }}</td>
+      <td>{{ result.suggestion ? result.suggestion : 'Nada' }}</td>
+      <td>{{ result.user || '-' }}</td>
+      <td>{{ formatTime(result.created_at) }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Paginación -->
+<div class="pagination" *ngIf="totalPages > 1">
+  <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">&lt;</button>
+
+  <button *ngFor="let page of [].constructor(totalPages); let i = index"
+          (click)="goToPage(i + 1)"
+          [class.active]="currentPage === i + 1">
+    {{ i + 1 }}
+  </button>
+
+  <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">&gt;</button>
+</div>

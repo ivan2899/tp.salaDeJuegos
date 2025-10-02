@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import Swal from 'sweetalert2';
 import { CartasService } from '../../../services/cartas.service';
+import { MessagesService } from '../../../services/messages.service';
+import { SupabaseService } from '../../../services/supabase.service';
 
 @Component({
   selector: 'app-mayor-menor',
@@ -11,11 +12,13 @@ import { CartasService } from '../../../services/cartas.service';
 export class MayorMenorComponent {
 
   deckId!: string;
-  cartaVisible: any = null;  // carta que se ve con imagen
-  cartaOculta: any = null;   // carta solo texto (valor real pero no se muestra imagen)
+  cartaVisible: any = null;
+  cartaOculta: any = null;
   puntos: number = 0;
+  vidas: number = 3;
+  reiniciar: boolean = false;
 
-  constructor(private cartasService: CartasService) {}
+  constructor(private cartasService: CartasService, private messagesService: MessagesService, private supabaseService: SupabaseService) { }
 
   ngOnInit(): void {
     this.iniciarJuego();
@@ -29,40 +32,29 @@ export class MayorMenorComponent {
   }
 
   obtenerCartas(inicial: boolean = false) {
-  const cantidad = inicial ? 2 : 1;
+    const cantidad = inicial ? 2 : 1;
 
-  this.cartasService.sacarCartas(this.deckId, cantidad).subscribe(res => {
-    if (inicial) {
-      // primera vez: saco 2
-      this.cartaVisible = res.cards[0];
-      this.cartaOculta = res.cards[1];
-    } else {
-      // después de cada jugada: saco 1
-      this.cartaVisible = this.cartaOculta; // la anterior oculta ahora es visible
-      this.cartaOculta = res.cards[0];      // la nueva es oculta
-    }
+    this.cartasService.sacarCartas(this.deckId, cantidad).subscribe(async res => {
+      if (inicial) {
+        this.cartaVisible = res.cards[0];
+        this.cartaOculta = res.cards[1];
+      } else {
+        this.cartaVisible = this.cartaOculta;
+        this.cartaOculta = res.cards[0];
+      }
 
-    // cuando ya no quedan cartas
-    if (res.remaining === 0) {
-            Swal.fire({
-        title: '🏁 Terminaste el mazo',
-        text: `Tus puntos totales son: ${this.puntos}`,
-        icon: 'info',
-        background: "#ffa",
-        showCancelButton: false,
-        confirmButtonText: '🔄 Reiniciar juego',
-        allowOutsideClick: false
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.puntos = 0;        // reinicio puntaje
-          this.iniciarJuego();    // arranco nuevo mazo
-        }
-      });
-    }
-  });
-}
+      if (res.remaining === 0) {
+        const reiniciar = await this.messagesService.endGame(
+          '🏁 Terminaste el mazo',
+          `Tus puntos totales son: ${this.puntos}`
+        );
+        this.supabaseService.gameLog(this.puntos, 'MayorMenor');
 
-  // 🔹 Traducción palo en texto
+        if (reiniciar) this.iniciarJuego();
+      }
+    });
+  }
+
   getDescripcionCarta(carta: any): string {
     const palos: any = {
       HEARTS: 'corazones',
@@ -73,7 +65,6 @@ export class MayorMenorComponent {
     return `${carta.value} de ${palos[carta.suit]}`;
   }
 
-  // 🔹 Convertir valor de carta a número
   private getValorNumerico(carta: any): number {
     const valores: any = {
       'ACE': 14,
@@ -89,16 +80,16 @@ export class MayorMenorComponent {
     const valorOculta = this.getValorNumerico(this.cartaOculta);
 
     if (valorOculta > valorVisible) {
-      Swal.fire('🎉 Acertaste!', 'La carta oculta era mayor, sumas 1 punto', 'success');
+      this.messagesService.succesMessage('🎉 Acertaste!', 'La carta oculta era mayor, sumas 1 punto');
       this.puntos++;
     } else if (valorOculta < valorVisible) {
-      Swal.fire('😢 Fallaste', 'La carta oculta era menor, restas un punto', 'error');
-      if(this.puntos > 0) {this.puntos--;}
+      this.perderVida();
+      if (this.puntos > 0) { this.puntos--; }
     } else {
-      Swal.fire('😎 Empate', 'Las cartas tienen el mismo valor, seguís en juego', 'info');
-    }
+      this.messagesService.equalMessage('😎 Empate', 'Las cartas tienen el mismo valor, seguís en juego');
 
-    this.obtenerCartas(); // sacar nuevas cartas
+    }
+    this.obtenerCartas();
   }
 
   elegirMenor() {
@@ -106,24 +97,36 @@ export class MayorMenorComponent {
     const valorOculta = this.getValorNumerico(this.cartaOculta);
 
     if (valorOculta < valorVisible) {
-      Swal.fire('🎉 Acertaste!', 'La carta oculta era menor, sumas 1 punto', 'success');
+      this.messagesService.succesMessage('🎉 Acertaste!', 'La carta oculta era menor, sumas 1 punto');
       this.puntos++;
     } else if (valorOculta > valorVisible) {
-      Swal.fire('😢 Fallaste', 'La carta oculta era mayor, restas un punto', 'error');
-      if(this.puntos > 0) {this.puntos--;}
+      this.perderVida();
     } else {
-      Swal.fire('😎 Empate', 'Las cartas tienen el mismo valor, seguís en juego', 'info');
+      this.messagesService.equalMessage('😎 Empate', 'Las cartas tienen el mismo valor, seguís en juego');
     }
+    this.obtenerCartas();
+  }
 
-    this.obtenerCartas(); // sacar nuevas cartas
+  private async perderVida() {
+    if (this.vidas > 1) {
+      this.vidas--;
+      this.messagesService.wrongAnswer(`Pierdes una vida. Vidas restantes: ${this.vidas}`);
+    } else {
+      const reiniciar = await this.messagesService.endGame(
+        '💀 GAME OVER',
+        `Te quedaste sin vidas. Puntos: ${this.puntos}`
+      );
+      this.supabaseService.gameLog(this.puntos, 'Mayor o menor');
+
+      if (reiniciar) {
+        this.puntos = 0;
+        this.vidas = 3;
+        this.iniciarJuego();
+      }
+    }
   }
 
   ayuda() {
-    Swal.fire({
-      title: "Cómo funciona?",
-      text: "Mayor o menor es un juego en el que deberás adivinar si la carta que está volteada es mayor o menor a tu carta visible. Si aciertas, sumás puntos; si no, restás.",
-      icon: "question",
-      background: "#ffa"
-    });
+    this.messagesService.helpMessage('Mayor o menor es un juego en el que deberás adivinar si la carta que está volteada es mayor o menor a tu carta visible. Si aciertas, sumás puntos; si no, restás.');
   }
 }

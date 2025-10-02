@@ -1,8 +1,8 @@
 import { Component} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from '@angular/router';
-import Swal from 'sweetalert2';
 import { SupabaseService } from '../../services/supabase.service';
+import { MessagesService } from '../../services/messages.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +17,8 @@ export class LoginComponent {
 
   constructor(
     private router: Router,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private messagesServices: MessagesService
   ) {}
 
   async login() {
@@ -45,12 +46,7 @@ export class LoginComponent {
     }
 
     if (huboError) {
-      Swal.fire({
-        title: 'Error',
-        text: mensaje,
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
+      this.messagesServices.errorMessage('Error', mensaje);
     }
   }
 

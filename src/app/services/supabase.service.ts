@@ -30,16 +30,10 @@ export class SupabaseService {
     return await this.supabase.auth.signOut();
   }
 
-  getUser() {
-    return this.supabase.auth.getUser();
-  }
-
-  /** Devuelve la sesión actual */
   async getSession() {
     return await this.supabase.auth.getSession();
   }
 
-  /** Suscripción a cambios de auth (login/logout) */
   onAuthStateChange(callback: (event: AuthChangeEvent, session: Session | null) => void) {
     return this.supabase.auth.onAuthStateChange(callback);
   }
@@ -63,7 +57,6 @@ export class SupabaseService {
   // 🔹 USUARIOS
   // ------------------
 
-  /** Verifica si un usuario ya existe en la tabla datos-usuarios */
   async userExists(email: string) {
     return await this.supabase
       .from('datos-usuarios')
@@ -71,11 +64,10 @@ export class SupabaseService {
       .eq('email', email);
   }
 
-  /** Inserta un nuevo usuario en datos-usuarios */
   async saveUserData(user: User, name: string, email: string) {
     return await this.supabase
       .from('datos-usuarios')
-      .insert([{ authId: user.id, name, email }]);
+      .insert([{ authId: user.id, name, email, role: 'Usuario' }]);
   }
 
 
@@ -83,7 +75,6 @@ export class SupabaseService {
   // 🔹 Chat
   // ------------------
 
-  /** Obtiene todos los mensajes */
   async getMessages() {
     return await this.supabase
       .from('chat')
@@ -91,14 +82,12 @@ export class SupabaseService {
       .order('created_at', { ascending: true });
   }
 
-  /** Envía un nuevo mensaje */
-  async sendMessage(email: string, texto: string) {
+  async sendMessage(email: string, text: string) {
     return await this.supabase
       .from('chat')
-      .insert([{ email, texto }]);
+      .insert([{ email, text }]);
   }
 
-  /** Suscripción a nuevos mensajes */
   subscribeToMessages(callback: (msg: Message) => void): RealtimeChannel {
     const channel = this.supabase
       .channel('chat')
@@ -108,8 +97,8 @@ export class SupabaseService {
         (payload) => {
           const newMsg = payload.new as any;
           const message: Message = {
-            text: newMsg.texto,
-            type: 'received', // el componente decide si es "sent" o "received"
+            text: newMsg.text,
+            type: 'received',
             email: newMsg.email,
             created_at: newMsg.created_at
           };
@@ -121,8 +110,93 @@ export class SupabaseService {
     return channel;
   }
 
-  /** Cancelar suscripción */
   removeChannel(channel: RealtimeChannel) {
     this.supabase.removeChannel(channel);
+  }
+
+  async getRoleUser(): Promise<string | null> {
+    const { data: { user } } = await this.supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data, error } = await this.supabase
+      .from('datos-usuarios')
+      .select('role')
+      .eq('authId', user.id)
+      .single();
+
+    if (error || !data) return null;
+
+    return data.role;
+  }
+
+  async surveyLog(name: string, age: number, phone: number, game: string, difficult: string, suggestion: string) {
+    const res = await this.getCurrentUser();
+    const user = res.data.user;
+
+    if (!user) {
+      throw new Error("No hay usuario logueado");
+    }
+    await this.supabase
+      .from('datos-encuesta')
+      .insert([{ name, age, phone, game, difficult, suggestion, user: user.email }]);
+  }
+
+  async gameLog(score: number, game: string) {
+    const res = await this.getCurrentUser();
+    const user = res.data.user;
+
+    if (!user) {
+      throw new Error("No hay usuario logueado");
+    }
+    await this.supabase
+      .from('datos-juegos')
+      .insert([{ email: user.email, puntos: score, juego: game }]);
+  }
+
+  async loadSurveyResults(page: number = 1, pageSize: number = 5): Promise<{ data: any[]; total: number } | null> {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, error, count } = await this.supabase
+      .from('datos-encuesta')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .order('name', { ascending: true })
+      .range(from, to);
+
+    if (error) {
+      console.error('Error cargando resultados:', error.message);
+      return null;
+    }
+
+    return { data: data ?? [], total: count ?? 0 };
+  }
+
+  async loadGameResults(
+    page: number = 1,
+    pageSize: number = 5,
+    juego?: string
+  ): Promise<{ data: any[]; total: number } | null> {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let query = this.supabase
+      .from('datos-juegos')
+      .select('*', { count: 'exact' })
+      .order('puntos', { ascending: false }) // para ver mejores puntajes primero
+      .range(from, to);
+
+    if (juego) {
+      query = query.eq('juego', juego);
+    }
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      console.error('Error cargando resultados de juegos:', error.message);
+      return null;
+    }
+
+    return { data: data ?? [], total: count ?? 0 };
   }
 }

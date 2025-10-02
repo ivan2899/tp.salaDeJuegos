@@ -1,5 +1,8 @@
-import { Component, NgModule } from '@angular/core';
-import Swal from 'sweetalert2';
+import { Component } from '@angular/core';
+import palabrasData from '../../../../assets/media/palabras.json';
+import { MessagesService } from '../../../services/messages.service';
+import { max } from 'rxjs';
+import { SupabaseService } from '../../../services/supabase.service';
 
 @Component({
   selector: 'app-ahorcado',
@@ -8,30 +11,20 @@ import Swal from 'sweetalert2';
   styleUrl: './ahorcado.component.scss'
 })
 export class AhorcadoComponent {
-  puntos: number = 50;
+  puntos: number = 0;
   palabraOculta: string = '';
   letrasAdivinadas: string[] = [];
   intentos: number = 0;
   maxIntentos: number = 5;
+  vidas: number = this.maxIntentos;
   teclado: string[][] = [];
-  private palabras: string[] = [
-    "auto", "coche", "avion", "tren", "barco", "bicicleta", "camion", "moto", "patineta", "submarino",
-    "computadora", "teclado", "pantalla", "raton", "impresora", "telefono", "celular", "televisor", "cable", "internet",
-    "perro", "gato", "caballo", "vaca", "oveja", "conejo", "leon", "tigre", "elefante", "jirafa",
-    "mesa", "silla", "puerta", "ventana", "piso", "techo", "pared", "cuadro", "cama", "armario",
-    "rojo", "azul", "verde", "amarillo", "negro", "blanco", "gris", "marron", "violeta", "rosa",
-    "agua", "fuego", "tierra", "aire", "nieve", "lluvia", "viento", "nube", "rayo", "trueno",
-    "pan", "leche", "carne", "pescado", "pollo", "arroz", "pasta", "queso", "huevo", "fruta",
-    "escuela", "colegio", "universidad", "profesor", "alumno", "examen", "libro", "cuaderno", "lapiz", "boligrafo",
-    "futbol", "tenis", "baloncesto", "natacion", "ciclismo", "voleibol", "gimnasia", "boxeo", "golf", 
-    "ciudad", "pueblo", "pais", "mundo", "continente", "rio", "mar", "oceano", "bosque", "estacionamiento"
-  ];
+  private palabras: string[] = palabrasData.palabras;
 
-  constructor() { }
+  private inicioJuego: number = 0;
+
+  constructor(private messagesService: MessagesService, private supabaseService: SupabaseService) { }
 
   ngOnInit() {
-    this.cargarPalabra();
-
     this.teclado = [
       ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
       ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'],
@@ -41,66 +34,51 @@ export class AhorcadoComponent {
     this.reiniciarJuego();
   }
 
-  // Carga una palabra aleatoria desde el arreglo interno
   cargarPalabra() {
     const randomIndex = Math.floor(Math.random() * this.palabras.length);
     this.palabraOculta = this.palabras[randomIndex].toUpperCase();
+    console.log(this.palabraOculta);
   }
 
-  // Reinicia variables y carga nueva palabra
   reiniciarJuego() {
     this.letrasAdivinadas = [];
     this.intentos = 0;
+    this.puntos = 0;
+    this.vidas = this.maxIntentos;
     this.cargarPalabra();
+    this.inicioJuego = Date.now();
   }
 
-  // Verificar letra
-  presionarLetra(letra: string) {
-    console.log(this.palabraOculta);
-
+  async presionarLetra(letra: string) {
     if (this.letrasAdivinadas.includes(letra)) return;
 
     this.letrasAdivinadas.push(letra);
 
-    if (!this.palabraOculta.includes(letra)) {
+    if (this.palabraOculta.includes(letra)) {
+      this.puntos += 5;
+    } else {
       this.intentos++;
-      if (this.puntos > 0 ) {this.puntos -= 10;}
+      this.vidas--;
+      this.messagesService.wrongAnswer(`😢La letra no está en esta palabra, te quedan ${this.vidas} vidas`);
+      this.puntos = Math.max(0, this.puntos - 1);
     }
 
     if (this.gano) {
-      Swal.fire({
-        title: 'Ganaste!!',
-        text: `🎉 ¡Ganaste!. Errores: ${this.intentos}`,
-        icon: 'success',
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Cancelar",
-        confirmButtonText: "Reiniciar juego"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.reiniciarJuego();
-        }
-      });
+      const tiempoSegundos = Math.floor((Date.now() - this.inicioJuego) / 1000);
+      const bonusRapidez = Math.max(0, 50 - tiempoSegundos);
+      this.puntos += bonusRapidez;
+
+      const reiniciar = await this.messagesService.winGame('Ganaste!!', `🎉 ¡Ganaste!. Errores: ${this.intentos}. Bonus por rapidez: ${bonusRapidez} puntos`);
+      this.supabaseService.gameLog(this.puntos, 'Ahorcado');
+      if (reiniciar) this.reiniciarJuego();
+
     } else if (this.perdio) {
-      Swal.fire({
-        title: 'Perdiste !!',
-        text: `😢 Perdiste. La palabra era: ${this.palabraOculta}`,
-        icon: 'error',
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Cancelar",
-        confirmButtonText: "Reiniciar juego"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.reiniciarJuego();
-        }
-      });
+      const reiniciar = await this.messagesService.endGame('Perdiste !!', `😢 Perdiste. La palabra era: ${this.palabraOculta}`)
+      this.supabaseService.gameLog(this.puntos, 'Ahorcado');
+      if (reiniciar) this.reiniciarJuego();
     }
   }
 
-  // Mostrar guiones o letras
   get palabraMostrada(): string {
     return this.palabraOculta
       .split('')
@@ -108,41 +86,34 @@ export class AhorcadoComponent {
       .join(' ');
   }
 
-  // Imagen según intentos
   get imagenAhorcado(): string {
     switch (this.intentos) {
       case 0:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/games/ahorcado/ahorcado0.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZ2FtZXMvYWhvcmNhZG8vYWhvcmNhZG8wLnBuZyIsImlhdCI6MTc1NzQzNjQ0NiwiZXhwIjozMzM0MjM2NDQ2fQ.dqkW8MSVDXlszsk2pcxm1Ojgn-UJtASZeLYBczOOzJ8';
+        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado0.png';
       case 1:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/games/ahorcado/ahorcado1.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZ2FtZXMvYWhvcmNhZG8vYWhvcmNhZG8xLnBuZyIsImlhdCI6MTc1NzQzNjQ5NCwiZXhwIjoxNzg4OTcyNDk0fQ.NBUe5hptzhcZ7ok_ZcJbpBCXEDhZ7nnXWcBXgZ3TqqQ';
+        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado1.png';
       case 2:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/games/ahorcado/ahorcado2.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZ2FtZXMvYWhvcmNhZG8vYWhvcmNhZG8yLnBuZyIsImlhdCI6MTc1NzQzNjUwNSwiZXhwIjoxNzg4OTcyNTA1fQ.urmUIFGh4zu51VrcHwLjM-XUXVLgpbXnyKWzwInhRI4';
+        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado2.png';
       case 3:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/games/ahorcado/ahorcado3.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZ2FtZXMvYWhvcmNhZG8vYWhvcmNhZG8zLnBuZyIsImlhdCI6MTc1NzQzNjU0NywiZXhwIjoxNzg4OTcyNTQ3fQ.7SiIWliNsKvbPDRwSO5DTA841y0gs0DtCmElzgr0fm8';
+        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado3.png';
       case 4:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/games/ahorcado/ahorcado4.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZ2FtZXMvYWhvcmNhZG8vYWhvcmNhZG80LnBuZyIsImlhdCI6MTc1NzQzNjU1NywiZXhwIjoxNzg4OTcyNTU3fQ.92iV4X9hHac9HlX99rK60sd3tpa434zBVLb2SpytgII';
+        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado4.png';
       case 5:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/sign/images/games/ahorcado/ahorcado5.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84YTFjNTE5YS05ZDIzLTQ3Y2UtODAyOC1iMmZlYWJkNDY0MmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvZ2FtZXMvYWhvcmNhZG8vYWhvcmNhZG81LnBuZyIsImlhdCI6MTc1NzQzNjU3MCwiZXhwIjoxNzg4OTcyNTcwfQ.bUQOUDDpGqvChfnLL9AoHq1TZ6r9BdgLnWuXgSoRh0k';
+        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado5.png';
+      default:
+        return 'No se encontró la imagen';
     }
-    return `assets/ahorcado/ahorcado${this.intentos}.png`;
   }
 
-  // Saber si ganó
   get gano(): boolean {
     return !this.palabraMostrada.includes('_');
   }
 
-  // Saber si perdió
   get perdio(): boolean {
     return this.intentos >= this.maxIntentos;
   }
 
   ayuda() {
-    Swal.fire({
-      title: "Cómo funciona?",
-      text: "El ahorcado es un juego en el que aparece una palabra oculta y tienes oportunidades limitadas para poder adivinarla (en este caso 5 vidas)",
-      icon: "question",
-      background: "#ffa"
-    });
+    this.messagesService.helpMessage('El ahorcado es un juego en el que aparece una palabra oculta y tienes oportunidades limitadas para poder adivinarla (en este caso 5 vidas). Cada letra correcta suma 5 puntos, cada letra incorrecta resta 1, y hay bonus por rapidez.');
   }
 }

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import Swal from 'sweetalert2';
 
 interface Country {
   alpha2: string;
@@ -29,16 +28,14 @@ export class PreguntadosService {
     { alpha2: 'es', name: 'España' }
   ];
 
-  private availableCountries: Country[] = [...this.countries]; // copia inicial
+  private availableCountries: Country[] = [...this.countries];
   private score = 0;
 
-  // Reinicia juego
   resetGame() {
     this.availableCountries = [...this.countries];
     this.score = 0;
   }
 
-  // Incrementa puntos (llamalo desde el componente cuando acierte)
   addPoint() {
     this.score++;
   }

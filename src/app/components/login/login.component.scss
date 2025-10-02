@@ -85,7 +85,7 @@
     width: 40% !important;
     margin-left: 24px;
     background-color: #514f4f !important;
-    color: #ffffffaa !important;
+    color: #ffffffaa;
 }
 
 .wrapper .register-link{
@@ -113,4 +113,11 @@
     cursor: pointer;
     font-size: 14.5px;
     font-weight: bold;
+}
+
+.usr{
+    color: #0a6 !important;
+}
+.adm{
+    color: #f40 !important;
 }

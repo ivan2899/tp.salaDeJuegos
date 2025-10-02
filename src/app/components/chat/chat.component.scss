@@ -1,4 +1,3 @@
-/* Ventana del chat */
 .chat-window {
     position: fixed;
     top: 80px;
@@ -22,7 +21,6 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    /* espacio entre icono y título */
 
     img {
         width: 32px;
@@ -121,7 +119,6 @@
     }
 }
 
-/* Animación de aparición */
 @keyframes slideUp {
     from {
         transform: translateY(20px);

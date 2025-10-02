@@ -1,7 +1,6 @@
 <header class="main-header">
-
   <div class="actions">
-    <button routerLink="home" routerLinkActive="btn-active" class="btn-nav">Home</button>
+    <button routerLink="home" routerLinkActive="btn-active" class="btn-nav">Inicio</button>
     <button routerLink="about" routerLinkActive="btn-active" class="btn-nav">Acerca de Mi</button>
   </div>
 
@@ -9,9 +8,9 @@
 
   <div *ngIf="isLoggedIn; else guest" class="d-flex align-items-center gap-3">
     <div class="text-end">
-      <div class="small text-primary">{{ name }}</div>
+      <div class="small user">{{ name }}</div>
     </div>
-    <button class="btn-nav" (click)="logout()">Log Out</button>
+    <button class="btn-nav" (click)="logout()">Cerrar sesión</button>
   </div>
 
   <ng-template #guest>

@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
-import { createClient, User } from '@supabase/supabase-js';
-import { environment } from '../../../environments/environment';
+import { User } from '@supabase/supabase-js';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, NgClass } from '@angular/common';
-import Swal from 'sweetalert2';
 import { SupabaseService } from '../../services/supabase.service';
+import { MessagesService } from '../../services/messages.service';
 
-const supabase = createClient(environment.apiUrl, environment.publicAnonKey);
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -23,7 +21,8 @@ export class RegisterComponent {
 
   constructor(
     private router: Router,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private messagesServices: MessagesService
   ) {}
 
   async register() {
@@ -37,7 +36,6 @@ export class RegisterComponent {
       return;
     }
 
-    // 🔹 Registro en Supabase Auth
     const { data, error } = await this.supabaseService.signUp(this.username, this.password);
 
     if (error) {
@@ -51,7 +49,6 @@ export class RegisterComponent {
   }
 
   private async saveUserData(user: User) {
-    // 🔹 Verificar si ya existe
     const { data: existe, error: errorCheck } = await this.supabaseService.userExists(this.username);
 
     if (errorCheck) {
@@ -64,7 +61,6 @@ export class RegisterComponent {
       return;
     }
 
-    // 🔹 Guardar usuario en la tabla
     const { error } = await this.supabaseService.saveUserData(user, this.name, this.username);
 
     if (error) {
@@ -75,12 +71,7 @@ export class RegisterComponent {
   }
 
   private error(mensaje: string) {
-    Swal.fire({
-      title: 'Error',
-      text: mensaje,
-      icon: 'error',
-      confirmButtonText: 'OK'
-    });
+    this.messagesServices.errorMessage('Error', mensaje);
   }
 
   private traducirError(codigo: string): string {

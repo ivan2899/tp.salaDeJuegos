@@ -8,7 +8,6 @@ import { MayorMenorComponent } from '../../components/games/mayor-menor/mayor-me
 import { PreguntadosComponent } from '../../components/games/preguntados/preguntados.component';
 import { BlackjackComponent } from '../../components/games/blackjack/blackjack.component';
 import { RouterLink } from '@angular/router';
-import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
 
 
