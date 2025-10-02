@@ -13,7 +13,7 @@ import { SupabaseService } from '../../services/supabase.service';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit, OnDestroy {
-    @ViewChild('chatBody') private chatBody!: ElementRef<HTMLDivElement>;
+  @ViewChild('chatBody') private chatBody!: ElementRef<HTMLDivElement>;
 
   newMessage: string = '';
   messages: Message[] = [];
@@ -44,8 +44,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.scrollToBottom();
     }
 
-    this.channel = this.supabaseService.subscribeToMessages((msg) => {
-      msg.type = msg.email === this.actualUser ? 'sent' : 'received';
+    this.channel = this.supabaseService.subscribeToMessages(this.actualUser, (msg) => {
       this.messages.push(msg);
       this.scrollToBottom();
     });
@@ -61,14 +60,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (!this.newMessage.trim()) return;
 
     const messageToSend = this.newMessage.trim();
-    const now = new Date().toISOString();
 
-    this.messages.push({
-      text: messageToSend,
-      type: 'sent',
-      email: this.actualUser,
-      created_at: now
-    });
     this.scrollToBottom();
 
     const { error } = await this.supabaseService.sendMessage(this.actualUser, messageToSend);

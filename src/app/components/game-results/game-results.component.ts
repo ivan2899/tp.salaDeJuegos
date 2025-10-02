@@ -18,7 +18,7 @@ export class GameResultsComponent {
   pageSize: number = 5;
   totalRecords: number = 0;
 
-  filtroJuego: string = ''; // "" = todos, o "Preguntados", "Ahorcado", etc.
+  filtroJuego: string = '';
   juegos: string[] = ['Blackjack', 'Preguntados', 'Mayor o menor', 'Ahorcado'];
 
   constructor(private supabaseService: SupabaseService) { }

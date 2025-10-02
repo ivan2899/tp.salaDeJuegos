@@ -13,7 +13,6 @@ export class SupabaseService {
     this.supabase = createClient(environment.apiUrl, environment.publicAnonKey);
   }
 
-
   // ------------------
   // 🔹 AUTH
   // ------------------
@@ -88,9 +87,9 @@ export class SupabaseService {
       .insert([{ email, text }]);
   }
 
-  subscribeToMessages(callback: (msg: Message) => void): RealtimeChannel {
+  subscribeToMessages(actualUser: string, callback: (msg: Message) => void): RealtimeChannel {
     const channel = this.supabase
-      .channel('chat')
+      .channel('chat-room')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'chat' },
@@ -98,7 +97,7 @@ export class SupabaseService {
           const newMsg = payload.new as any;
           const message: Message = {
             text: newMsg.text,
-            type: 'received',
+            type: newMsg.email === actualUser ? 'sent' : 'received',
             email: newMsg.email,
             created_at: newMsg.created_at
           };
@@ -128,6 +127,10 @@ export class SupabaseService {
 
     return data.role;
   }
+
+  // ------------------
+  // 🔹 Cargas
+  // ------------------
 
   async surveyLog(name: string, age: number, phone: number, game: string, difficult: string, suggestion: string) {
     const res = await this.getCurrentUser();
@@ -183,7 +186,7 @@ export class SupabaseService {
     let query = this.supabase
       .from('datos-juegos')
       .select('*', { count: 'exact' })
-      .order('puntos', { ascending: false }) // para ver mejores puntajes primero
+      .order('puntos', { ascending: false })
       .range(from, to);
 
     if (juego) {
