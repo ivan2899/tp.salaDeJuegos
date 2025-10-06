@@ -31,7 +31,7 @@ export class BlackjackComponent {
   resultado: string | null = null;
 
   rondasJugadas: number = 0;
-  maxRondas: number = 10;
+  maxRondas: number = 2;
 
   cartaOculta: string = 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/mayormenor/carBlue.png';
 
@@ -48,7 +48,7 @@ export class BlackjackComponent {
       this.iniciarPartida();
     }
     else {
-      this.messagesService.errorMessage('Créditos infinitos', `No puedes apostar 0 créditos`)
+      this.messagesService.errorMessage('Créditos bajos', `No puedes apostar 0 créditos`)
     }
   }
 
@@ -63,7 +63,6 @@ export class BlackjackComponent {
     this.crupier = [];
     this.crupierOculta = true;
     this.turnoUsuario = false;
-    this.resultado = null;
 
     this.cartasService.crearMazo().subscribe((res: any) => {
       this.deckId = res.deck_id;
@@ -132,27 +131,23 @@ export class BlackjackComponent {
     await new Promise(res => setTimeout(res, 3000));
 
     if (puntosJugador > 21 || (puntosJugador < puntosCrupier && puntosCrupier <= 21)) {
-      this.resultado = 'Perdiste 😢';
       this.creditos -= this.creditosApostados;
       this.vidas--;
       this.messagesService.wrongAnswer(`Vidas restantes: ${this.vidas}`)
     } else if (puntosJugador > puntosCrupier || puntosCrupier > 21) {
-      this.resultado = 'Ganaste 🎉';
       this.creditos += this.creditosApostados;
-      this.messagesService.winGame('¡Ganaste!', `Créditos actuales: ${this.creditos}`)
+      this.messagesService.succesMessage('¡Ganaste!', `Créditos actuales: ${this.creditos}`)
     } else {
-      this.resultado = 'Empate 🤝';
-      this.messagesService.equalMessage('Empate', `Créditos actuales: ${this.creditos}`);
+      this.messagesService.equalMessage('Empate 🤝', `Créditos actuales: ${this.creditos}`);
     }
 
     this.rondasJugadas++;
 
     if (this.vidas > 0 && this.rondasJugadas < this.maxRondas && this.creditos > 0) {
-      this.resultado = null;
       this.creditosApostados = 0;
       this.mostrandoCreditos = true;
     } else {
-      const isConfirmed = await this.messagesService.endGame('Juego terminado', `💀 Te quedaste sin vidas, créditos finales: ${this.creditos}`)
+      const isConfirmed = await this.messagesService.endGame('Juego terminado', `Se jugaron todas las rondas permitidas, créditos finales: ${this.creditos}`)
       this.supabaseService.gameLog(this.creditos, 'Blackjack');
 
       if (isConfirmed) {
@@ -192,5 +187,9 @@ export class BlackjackComponent {
 
   ayuda() {
     this.messagesService.helpMessage('Blackjack: llega a 21 sin pasarte. Cada ronda apuestas créditos, si pierdes pierdes una vida.');
+  }
+
+  creditosMax(){
+    this.creditosApostados = this.creditos;
   }
 }

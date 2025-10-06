@@ -1,8 +1,10 @@
 <div class="overlay" *ngIf="mostrandoCreditos">
   <div class="creditos-box">
     <p>Ingrese los créditos a apostar tus créditos({{creditos}}):</p>
-    <input type="number" [(ngModel)]="creditosApostados" (keydown.enter)="confirmarCreditos()"/>
+    <input type="number" [(ngModel)]="creditosApostados" (keyup.enter)="confirmarCreditos()"/>
     <button (click)="confirmarCreditos()">Confirmar</button>
+    <br>
+    <button (click)="creditosMax()">Maximo</button>
   </div>
 </div>
 
@@ -20,8 +22,6 @@
 
 <div class="overlay" *ngIf="resultado">
   <div class="resultado-box">
-    <h2>{{ resultado }}</h2>
-    <p>Créditos: {{ creditos }}</p>
     <button (click)="finalizarPartida()" *ngIf="vidas > 0">Siguiente Ronda</button>
     <p *ngIf="vidas === 0">Te quedaste sin vidas 💀</p>
   </div>

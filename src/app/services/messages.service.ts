@@ -23,7 +23,7 @@ export class MessagesService {
       title: title,
       text: text,
       icon: "info",
-      timer: 3000,
+      timer: 2000,
       timerProgressBar: true,
       background: "#ffa"
     });
@@ -34,7 +34,7 @@ export class MessagesService {
       title: title,
       text: text,
       icon: "success",
-      timer: 3000,
+      timer: 2000,
       timerProgressBar: true,
       color: '#000',
       background: "rgba(26, 111, 0, 1)"
@@ -69,7 +69,7 @@ export class MessagesService {
       title: '😢 UPS, te equivocaste',
       text: text,
       icon: 'error',
-      timer: 3000,
+      timer: 2000,
       timerProgressBar: true,
       showConfirmButton: false,
       background: '#fccfcf'
