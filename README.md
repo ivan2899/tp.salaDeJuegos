@@ -129,7 +129,7 @@ En cada uno de los juegos contamos con una opción de ayuda haciendo clic en el 
 Podés usar:
 
 - Email: prueba@gmail.com
-- Password: +_+Pm@uF.rqi9$b
+- Password: 123456
 
 ---
 
