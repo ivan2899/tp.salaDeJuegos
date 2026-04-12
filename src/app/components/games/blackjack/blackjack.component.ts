@@ -33,7 +33,7 @@ export class BlackjackComponent {
   rondasJugadas: number = 0;
   maxRondas: number = 2;
 
-  cartaOculta: string = 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/mayormenor/carBlue.png';
+  cartaOculta: string = 'https://winlvopnawvcvyavuxcj.supabase.co/storage/v1/object/public/images/games/mayormenor/carBlue.png';
 
   constructor(private cartasService: CartasService, private messagesService: MessagesService, private supabaseService: SupabaseService) { }
 

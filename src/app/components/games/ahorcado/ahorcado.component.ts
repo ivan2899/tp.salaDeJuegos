@@ -89,17 +89,17 @@ export class AhorcadoComponent {
   get imagenAhorcado(): string {
     switch (this.intentos) {
       case 0:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado0.png';
+        return 'https://winlvopnawvcvyavuxcj.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado0.png';
       case 1:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado1.png';
+        return 'https://winlvopnawvcvyavuxcj.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado1.png';
       case 2:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado2.png';
+        return 'https://winlvopnawvcvyavuxcj.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado2.png';
       case 3:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado3.png';
+        return 'https://winlvopnawvcvyavuxcj.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado3.png';
       case 4:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado4.png';
+        return 'https://winlvopnawvcvyavuxcj.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado4.png';
       case 5:
-        return 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado5.png';
+        return 'https://winlvopnawvcvyavuxcj.supabase.co/storage/v1/object/public/images/games/ahorcado/ahorcado5.png';
       default:
         return 'No se encontró la imagen';
     }

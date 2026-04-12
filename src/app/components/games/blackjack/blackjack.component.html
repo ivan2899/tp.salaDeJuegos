@@ -10,13 +10,13 @@
 
 <div class="back" [routerLink]="'../../home'">
   <img
-    src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/extra/back.png"
+    src="https://winlvopnawvcvyavuxcj.supabase.co/storage/v1/object/public/images/extra/back.png"
     alt="" class="imgBack">
 </div>
 
 <div class="help" (click)="ayuda()">
   <img
-    src="https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/extra/helpIcon.png"
+    src="https://winlvopnawvcvyavuxcj.supabase.co/storage/v1/object/public/images/extra/helpIcon.png"
     alt="" class="imgHelp">
 </div>
 
@@ -31,7 +31,7 @@
   <div class="crupier">
     <div class="cartas">
       <img *ngFor="let carta of crupier; let i = index"
-        [src]="(i===1 && crupierOculta) ? 'https://wwgfysczkcuaqjmpqkxo.supabase.co/storage/v1/object/public/images/games/mayormenor/carBlue.png' : carta.image"
+        [src]="(i===1 && crupierOculta) ? 'https://winlvopnawvcvyavuxcj.supabase.co/storage/v1/object/public/images/games/mayormenor/carBlue.png' : carta.image"
         [class.animando-jugador]="carta.animando && carta.tipo === 'jugador'"
         [class.animando-crupier]="carta.animando && carta.tipo === 'crupier'" alt="carta">
     </div>

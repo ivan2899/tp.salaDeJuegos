@@ -66,6 +66,7 @@ export class RegisterComponent {
     if (error) {
       this.error("Hubo un problema al registrar el usuario");
     } else {
+      this.messagesServices.succesMessage("Usuario registrado", "Su usuario fue creado con éxito, recuerde verificar el correo")
       this.router.navigate(['/home']);
     }
   }
